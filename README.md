@@ -1,6 +1,6 @@
 📘 README.md — Updated to v3.6.0
 
-Dưới đây là file README.md đầy đủ, đã cập nhật cho hệ thống Config mới (GUI cài đặt + root detection qua sudo + quyền hạn theo lệnh):
+ đây là file README.md đầy đủ, đã cập nhật cho hệ thống Config mới (GUI cài đặt + root detection qua sudo + quyền hạn theo lệnh):
 
 ```markdown
 📘 ACDV-Teams WiFi Security Tool — Tài liệu đầy đủ
