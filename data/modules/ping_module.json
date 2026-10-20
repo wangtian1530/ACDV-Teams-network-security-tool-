@@ -1,0 +1,9 @@
+{
+  "description": "Module kiểm tra kết nối IP nội bộ và Internet thông qua lệnh ping",
+  "settings": {
+    "default_internal_ip": "192.168.1.1",
+    "internet_target": "8.8.8.8",
+    "count": 3,
+    "timeout": 5
+  }
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ACDV-Teams Network Security Tool</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 ACDV-Teams Network Security Tool</h1>
+            <p>Chuyên gia bảo mật WiFi & Quét mạng LAN</p>
+        </div>
+
+        <!-- Thanh trạng thái + ticker + nút log + nút cấu hình -->
+        <div class="status-bar-top">
+            <div class="ws-status">
+                <span class="status-dot" id="wsStatusDot"></span>
+                <span id="wsStatusText">Đang kết nối...</span>
+            </div>
+            <div class="status-ticker" id="statusTicker">
+                <span class="ticker-icon">⚙️</span>
+                <span class="ticker-text" id="tickerText">Sẵn sàng</span>
+            </div>
+            <button class="log-btn" id="logBtn">📋 Log</button>
+            <button class="log-btn config-btn" id="configBtn">⚙️ Cài đặt</button>
+        </div>
+
+        <!-- Button Panel -->
+        <div class="button-panel">
+            <div class="menu-nav" id="menuNav">
+                <button class="menu-tab active" data-cat="all">📦 Tất cả</button>
+            </div>
+
+            <div class="button-grid fixed-buttons" id="fixedButtons">
+                <button class="btn btn-primary" id="scanBtn">📡 Quét WiFi</button>
+                <button class="btn btn-warning" id="clearCardBtn">🔄 Giải phóng WiFi</button>
+                <button class="btn btn-danger" id="quitBtn">🔌 Bật lại WiFi</button>
+                <button class="btn btn-danger" id="shutdownBtn" style="background:linear-gradient(135deg,#721c24 0%,#dc3545 100%);">🛑 TẮT TOOL</button>
+            </div>
+
+            <div class="button-grid" id="moduleButtons"></div>
+
+            <div id="stopButtonContainer" style="display: none; margin-bottom: 15px;">
+                <button class="btn btn-danger" id="stopBtn" style="width: 100%; padding: 12px;">
+                    ⏹️ ĐANG DỪNG TÁC VỤ...
+                </button>
+            </div>
+
+            <!-- MAIN RESULT SECTION -->
+            <div id="mainResultSection" class="vulnerability-section" style="display: none;">
+                <div class="vuln-header">
+                    <h2 id="resultTitle">📊 KẾT QUẢ MODULE</h2>
+                    <button class="close-vuln" id="closeResultBtn">×</button>
+                </div>
+                <div id="moduleProgressWrap" style="display:none;">
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" id="moduleProgressBar"></div>
+                    </div>
+                    <div class="progress-label" id="moduleProgressLabel">0%</div>
+                </div>
+                <div class="vuln-content" id="resultContent"></div>
+            </div>
+
+            <!-- Danh sách WiFi -->
+            <h3 style="margin: 15px 0 10px 0;">📶 Mạng WiFi Phát Hiện</h3>
+            <div id="networkContainer" style="max-height: 300px; overflow-y: auto;">
+                <div style="text-align: center; padding: 40px; color: #999;">Chưa quét mạng. Nhấn "Quét WiFi" để bắt đầu.</div>
+            </div>
+
+            <!-- Danh sách thiết bị LAN -->
+            <div id="lanContainer" style="display: none;">
+                <h3 style="margin: 20px 0 10px 0;">🖧 Thiết Bị Trong Mạng LAN</h3>
+                <div id="lanDevicesContainer" style="max-height: 300px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- Khu vực kết nối -->
+            <div class="input-group" id="connectGroup">
+                <label>🔑 Mật khẩu WiFi:</label>
+                <div class="flex-row">
+                    <div class="password-wrapper">
+                        <input type="password" id="passwordInput" placeholder="Nhập mật khẩu hoặc để trống để Auto Connect" disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                        <button class="toggle-password-btn" id="togglePasswordBtn" type="button" title="Hiện/Ẩn mật khẩu" disabled>👁️</button>
+                    </div>
+                    <button class="btn btn-primary" id="connectBtn" disabled>🔐 Kết Nối</button>
+                    <button class="btn btn-warning" id="wpsBtn" disabled>⚡ WPS Attack</button>
+                    <button class="btn btn-info" id="autoConnectBtn" disabled>🔄 Auto Connect</button>
+                </div>
+                <div id="savedHint" class="hint-text"></div>
+            </div>
+
+            <div class="status-bar" id="status">[SYSTEM] Đang khởi tạo...</div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- LOG MODAL -->
+    <div id="logModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width:800px;">
+            <div class="modal-header">
+                <h3>📋 Lịch sử hoạt động</h3>
+                <button class="modal-close" id="logCloseBtn">×</button>
+            </div>
+            <div class="modal-body" id="logModalBody" style="max-height:60vh;overflow-y:auto;font-family:monospace;font-size:12px;"></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="logClearBtn">🗑️ Xoá log</button>
+                <button class="btn btn-secondary" id="logCloseBtn2">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODULE INPUT MODAL -->
+    <div id="moduleInputModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modalTitle">📥 Nhập thông tin</h3>
+                <button class="modal-close" id="modalCloseBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <label id="modalFieldLabel" for="modalInputField">Giá trị:</label>
+                <input type="text" id="modalInputField" class="modal-input" autocomplete="off">
+                <div class="modal-hint" id="modalHint"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancelBtn">Huỷ</button>
+                <button class="btn btn-primary" id="modalOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⚙️ CONFIG MODAL -->
+    <div id="configModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width:720px;">
+            <div class="modal-header">
+                <h3>⚙️ Cài đặt Tool</h3>
+                <button class="modal-close" id="configCloseBtn">×</button>
+            </div>
+            <div class="modal-body" id="configFormBody" style="max-height:65vh;overflow-y:auto;">
+                <div style="text-align:center;padding:30px;color:#888;">Đang tải cấu hình...</div>
+            </div>
+            <div id="configRestartNotice" class="config-notice" style="display:none;margin:0 20px 10px;">
+                ⚠️ Một số thay đổi cần khởi động lại tool để áp dụng.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="configCancelBtn">Huỷ</button>
+                <button class="btn btn-primary" id="configSaveBtn">💾 Lưu cấu hình</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

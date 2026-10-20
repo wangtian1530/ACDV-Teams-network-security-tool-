@@ -1,0 +1,19 @@
+{
+  "description": "Quét thư mục/file ẩn trên web target",
+  "files": {
+    "wordlists": [
+      "wordlists/*.txt",
+      "wordlists/dirb/*.txt"
+    ]
+  },
+  "settings": {
+    "timeout": 4,
+    "max_workers": 25,
+    "user_agent": "Mozilla/5.0 (ACDV-Scanner)",
+    "skip_status": [
+      "000",
+      "404"
+    ],
+    "use_builtin": true
+  }
+}

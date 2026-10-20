@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="ACDV-Teams WiFi Security Tool - Kiểm thử bảo mật không dây chuyên nghiệp. Quét WiFi, tự động kết nối với cơ sở dữ liệu mật khẩu, tấn công WPS, quét LAN với Nmap, Dirb, và hệ thống Plugin động.">
+    <meta name="author" content="Vương Thiên - ACDV-Teams">
+    <title>ACDV-Teams | WiFi Security Tool v3.4.0 - Tài liệu kỹ thuật & Demo 1:1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-dark: #0B0E17;
+            --bg-card: rgba(18, 22, 35, 0.7);
+            --bg-terminal: #0A0C14;
+            --border-purple: rgba(139, 92, 246, 0.25);
+            --text-primary: #EFF3FC;
+            --text-secondary: #B9C7D9;
+            --text-muted: #7A7F9E;
+            --accent-purple: #C084FC;
+            --accent-pink: #F472B6;
+            --accent-cyan: #5eead4;
+            --accent-yellow: #ffc107;
+            --accent-red: #dc3545;
+            --accent-green: #28a745;
+            --accent-blue: #667eea;
+        }
+        body {
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            overflow-x: auto;
+        }
+        /* Background aura + grid */
+        .bg-aura {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(45, 25, 85, 0.55), rgba(10, 14, 23, 0.96));
+            z-index: -2;
+        }
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(80, 70, 150, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(80, 70, 150, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1; pointer-events: none;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 0; flex-wrap: wrap; gap: 18px;
+            border-bottom: 1px solid var(--border-purple);
+            position: sticky; top: 0; background: rgba(11, 14, 23, 0.92);
+            backdrop-filter: blur(12px); z-index: 100;
+        }
+        .logo h1 {
+            font-size: 1.7rem; font-weight: 800;
+            background: linear-gradient(135deg, #C084FC, #F472B6, #38BDF8);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .logo span { font-size: 0.72rem; font-weight: 500; color: #9CA3AF; display: block; letter-spacing: 0.5px; }
+        .nav-links { display: flex; gap: 20px; list-style: none; flex-wrap: wrap; }
+        .nav-links a { text-decoration: none; color: #E2E8F0; font-weight: 500; transition: 0.2s; font-size: 0.88rem; }
+        .nav-links a:hover { color: var(--accent-purple); }
+
+        /* HERO */
+        .hero { padding: 56px 0 36px; text-align: center; }
+        .hero .error-code {
+            font-size: 7rem; font-weight: 800; line-height: 1;
+            background: linear-gradient(135deg, #F472B6, #C084FC, #38BDF8);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 0 30px rgba(192, 132, 252, 0.35));
+        }
+        .hero h2 {
+            font-size: 2.2rem; font-weight: 800; margin-top: 8px;
+            background: linear-gradient(to right, #F0F9FF, #C084FC);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .hero p { max-width: 780px; margin: 16px auto; color: var(--text-secondary); font-size: 1rem; }
+        .badge-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 26px 0; }
+        .tech-badge {
+            background: #262B44; padding: 6px 16px; border-radius: 40px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.76rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .cta-group { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 24px; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 26px; border-radius: 40px; text-decoration: none;
+            font-weight: 700; font-size: 0.9rem; transition: 0.25s;
+        }
+        .cta-primary {
+            background: linear-gradient(95deg, #8B5CF6, #D946EF);
+            color: white; box-shadow: 0 6px 24px rgba(139, 92, 246, 0.4);
+        }
+        .cta-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.55); }
+        .cta-secondary {
+            background: rgba(255,255,255,0.06); color: var(--text-primary);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+        }
+        .cta-secondary:hover { background: rgba(139, 92, 246, 0.15); transform: translateY(-3px); }
+
+        /* SECTION HEADER */
+        .section-header {
+            font-size: 1.9rem; font-weight: 700; margin: 46px 0 26px;
+            padding-bottom: 14px; border-bottom: 2px solid rgba(139, 92, 246, 0.35);
+        }
+        .section-header i { color: var(--accent-purple); margin-right: 12px; }
+
+        /* FEATURE GRID */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 26px; margin: 36px 0; }
+        .feature-card {
+            background: var(--bg-card); backdrop-filter: blur(10px);
+            border-radius: 26px; padding: 26px 22px;
+            border: 1px solid var(--border-purple); transition: 0.3s;
+        }
+        .feature-card:hover { border-color: #A78BFA; transform: translateY(-5px); }
+        .feature-icon { font-size: 2.2rem; color: var(--accent-purple); margin-bottom: 16px; }
+        .feature-card h3 { font-size: 1.25rem; margin-bottom: 10px; }
+        .feature-card p, .feature-card li { color: #C9D1E6; font-size: 0.84rem; }
+        .feature-card ul { margin-left: 18px; margin-top: 8px; }
+        .feature-card code {
+            background: #1E1B3A; padding: 2px 6px; border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--accent-cyan);
+        }
+
+        /* DEMO SECTION */
+        .demo-section {
+            background: rgba(15, 18, 30, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: 32px;
+            padding: 30px 24px;
+            margin: 40px 0;
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+        }
+        .demo-notice {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(249, 115, 22, 0.1));
+            border-left: 4px solid #F59E0B;
+            padding: 12px 18px; border-radius: 14px;
+            margin-bottom: 22px; font-size: 0.82rem; color: #FCD34D;
+        }
+        .demo-notice i { margin-right: 8px; }
+
+        /* DEMO TERMINAL */
+        .demo-terminal {
+            background: var(--bg-terminal);
+            border-radius: 18px;
+            border: 1px solid #2D2A5A;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .demo-term-bar {
+            background: #141828; padding: 10px 16px;
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid #2D2A5A;
+        }
+        .demo-dot { width: 11px; height: 11px; border-radius: 50%; }
+        .demo-dot.red { background: #ff5f56; }
+        .demo-dot.yellow { background: #ffbd2e; }
+        .demo-dot.green { background: #27c93f; }
+        .demo-term-title { color: #a9b7c6; font-size: 11px; flex: 1; font-family: 'JetBrains Mono', monospace; }
+        .demo-ws-status {
+            display: flex; align-items: center; gap: 6px;
+            background: #1e1e2e; padding: 3px 10px; border-radius: 20px;
+            font-size: 10px; font-family: 'JetBrains Mono', monospace;
+        }
+        .demo-ws-dot { width: 7px; height: 7px; border-radius: 50%; background: #28a745; animation: demo-pulse 1.5s infinite; }
+        @keyframes demo-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .demo-clear-btn {
+            background: none; border: 1px solid #4a4a5a; color: #a9b7c6;
+            cursor: pointer; font-size: 10px; padding: 3px 10px; border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .demo-clear-btn:hover { background: #4a4a5a; color: white; }
+        .demo-term-body {
+            background: var(--bg-terminal); height: 260px; overflow-y: auto;
+            padding: 12px 14px; font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px; color: #d4d4d4; line-height: 1.5;
+        }
+        .demo-term-body::-webkit-scrollbar { width: 6px; }
+        .demo-term-body::-webkit-scrollbar-thumb { background: #4a4a5a; border-radius: 4px; }
+        .demo-log { padding: 1px 0; white-space: pre-wrap; word-break: break-word; animation: demoFadeIn 0.2s; }
+        .demo-log.system { color: #6a9955; }
+        .demo-log.error { color: #f48771; }
+        .demo-log.cmd { color: #dcdcaa; }
+        .demo-log.success { color: #4ec9b0; }
+        .demo-log.warn { color: #ffc107; }
+        .demo-log.info { color: #9cdcfe; }
+        @keyframes demoFadeIn { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* DEMO BUTTONS */
+        .demo-btn-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .demo-btn {
+            padding: 10px 16px; border: none; border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace; font-weight: 600;
+            cursor: pointer; transition: 0.2s; font-size: 12px; color: white;
+        }
+        .demo-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        .demo-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .demo-btn.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .demo-btn.cyan { background: linear-gradient(135deg, #17a2b8, #0c5460); }
+        .demo-btn.green { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .demo-btn.yellow { background: linear-gradient(135deg, #ffc107, #e0a800); color: #333; }
+        .demo-btn.red { background: linear-gradient(135deg, #dc3545, #721c24); }
+        .demo-btn.gray { background: linear-gradient(135deg, #6c757d, #495057); }
+        .demo-btn.purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+
+        /* STOP CONTAINER */
+        .demo-stop-container { display: none; margin-bottom: 14px; animation: demo-stop-pulse 1s infinite; }
+        @keyframes demo-stop-pulse {
+            0%,100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(0.99); filter: brightness(1.2); }
+        }
+        .demo-stop-container button {
+            width: 100%; padding: 14px; font-size: 14px; font-weight: 800;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white; border: none; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.6);
+        }
+
+        /* PROGRESS BAR */
+        .demo-progress-wrap {
+            display: none; background: rgba(0, 0, 0, 0.35);
+            border-radius: 14px; padding: 12px 16px; margin-bottom: 14px;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+        .demo-progress-wrap.active { display: block; }
+        .demo-progress-outer {
+            width: 100%; height: 18px; background: #1a1e30; border-radius: 10px;
+            overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .demo-progress-inner {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #17a2b8 0%, #667eea 60%, #764ba2 100%);
+            transition: width 0.35s ease; border-radius: 10px 0 0 10px; position: relative;
+        }
+        .demo-progress-inner::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            animation: demo-progress-shine 1.4s linear infinite;
+        }
+        @keyframes demo-progress-shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        .demo-progress-label {
+            text-align: right; font-size: 12px; font-weight: 700;
+            color: var(--accent-cyan); margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* MODAL */
+        .demo-modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .demo-modal-overlay.active { display: flex; }
+        .demo-modal-box {
+            background: #141828; border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 20px; width: 100%; max-width: 520px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8); overflow: hidden;
+            animation: demo-modal-slide 0.25s ease;
+        }
+        @keyframes demo-modal-slide {
+            from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .demo-modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            color: white; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .demo-modal-header h3 { font-size: 1.05em; margin: 0; color: var(--accent-pink); }
+        .demo-modal-close {
+            background: none; border: none; color: #9ca3af; font-size: 26px;
+            cursor: pointer; line-height: 1; padding: 0 6px;
+        }
+        .demo-modal-close:hover { color: var(--accent-pink); }
+        .demo-modal-body { padding: 20px 20px 12px 20px; }
+        .demo-modal-body label { display: block; font-weight: 700; margin-bottom: 8px; color: var(--accent-purple); font-size: 13px; }
+        .demo-modal-input {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 10px;
+            background: #0F1220; color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace; font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .demo-modal-input:focus {
+            outline: none; border-color: #A78BFA;
+            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25);
+        }
+        .demo-modal-hint { margin-top: 8px; font-size: 11px; color: #94a3b8; min-height: 14px; }
+        .demo-modal-footer { padding: 12px 20px 20px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+        .demo-modal-footer button { min-width: 90px; }
+
+        /* MAIN RESULT */
+        .demo-main-result {
+            display: none; background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px; margin-top: 16px; overflow: hidden;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            animation: demo-modal-slide 0.3s ease;
+        }
+        .demo-main-result.active { display: block; }
+        .demo-main-result-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; color: white;
+        }
+        .demo-main-result-header h3 { font-size: 1em; color: var(--accent-pink); margin: 0; }
+        .demo-main-result-close {
+            background: none; border: none; color: #9ca3af; font-size: 26px;
+            cursor: pointer; line-height: 1; padding: 0 6px;
+        }
+        .demo-main-result-close:hover { color: var(--accent-pink); }
+        .demo-main-result-body { padding: 16px 20px; }
+
+        /* MODULE PANEL */
+        .demo-module-panel {
+            background: rgba(15, 18, 30, 0.7);
+            border-radius: 14px; padding: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .demo-module-panel h4 {
+            color: var(--accent-purple); font-size: 0.95em;
+            margin-bottom: 12px; padding-bottom: 6px;
+            border-bottom: 1px dashed rgba(139, 92, 246, 0.3);
+        }
+        .demo-kv-row {
+            display: flex; justify-content: space-between;
+            padding: 6px 0; font-size: 12px;
+            border-bottom: 1px dashed rgba(139, 92, 246, 0.15);
+        }
+        .demo-kv-row:last-child { border-bottom: none; }
+        .demo-kv-key { color: #94a3b8; font-weight: 600; }
+        .demo-kv-val { color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; }
+        .demo-module-actions { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+        /* NETWORK LIST */
+        .demo-net-list {
+            background: rgba(0,0,0,0.35); border-radius: 14px;
+            overflow: hidden; margin-bottom: 14px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .demo-net-header, .demo-net-item {
+            display: grid; grid-template-columns: 44px 1fr 140px 70px;
+            gap: 10px; padding: 10px 12px; font-size: 12px; align-items: center;
+        }
+        .demo-net-header {
+            background: rgba(139, 92, 246, 0.15); font-weight: 700; color: var(--accent-purple);
+            font-size: 11px; border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+        .demo-net-item {
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            cursor: pointer; transition: 0.15s; color: #DDE3F0;
+        }
+        .demo-net-item:hover { background: rgba(139, 92, 246, 0.08); }
+        .demo-net-item.selected { background: rgba(40, 167, 69, 0.15); border-left: 3px solid #28a745; }
+        .demo-net-item.disabled { opacity: 0.5; cursor: not-allowed; }
+        .demo-badge {
+            display: inline-block; padding: 1px 7px; border-radius: 10px;
+            font-size: 10px; font-weight: 700;
+        }
+        .demo-badge.wps { background: #ffc107; color: #333; }
+        .demo-badge.no-wps { background: #dc3545; color: white; }
+        .demo-badge.saved { background: #28a745; color: white; margin-left: 4px; }
+        .demo-signal { font-size: 10px; color: #8b96b0; margin-top: 2px; }
+        .demo-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8b96b0; }
+
+        /* LAN LIST */
+        .demo-lan-list {
+            background: rgba(0,0,0,0.35); border-radius: 14px;
+            overflow: hidden; margin-bottom: 14px;
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+        .demo-lan-header, .demo-lan-item {
+            display: grid; grid-template-columns: 130px 1fr 90px;
+            gap: 10px; padding: 10px 12px; font-size: 12px; align-items: center;
+        }
+        .demo-lan-header {
+            background: rgba(23, 162, 184, 0.15); font-weight: 700;
+            color: var(--accent-cyan); font-size: 11px;
+            border-bottom: 2px solid rgba(23, 162, 184, 0.3);
+        }
+        .demo-lan-item { border-bottom: 1px solid rgba(23, 162, 184, 0.1); color: #DDE3F0; }
+        .demo-lan-ip { font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); font-weight: 700; }
+        .demo-lan-ports { font-size: 10px; margin-top: 3px; }
+        .demo-port-badge {
+            display: inline-block; background: #17a2b8; color: white;
+            padding: 1px 6px; border-radius: 8px; font-size: 9px; margin: 2px 2px 0 0;
+        }
+        .demo-lan-os { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
+
+        /* INPUT GROUP */
+        .demo-input-group {
+            background: rgba(0,0,0,0.3); border-radius: 14px; padding: 14px;
+            margin-bottom: 12px; border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .demo-input-label { font-weight: 700; color: var(--accent-purple); font-size: 12px; margin-bottom: 8px; display: block; }
+        .demo-input-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .demo-pw-wrapper { position: relative; flex: 2 1 200px; min-width: 180px; }
+        .demo-pw-wrapper input {
+            width: 100%; padding: 10px 42px 10px 12px;
+            border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 10px;
+            background: #0F1220; color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace; font-size: 13px;
+        }
+        .demo-pw-wrapper input:focus { outline: none; border-color: #A78BFA; box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.25); }
+        .demo-pw-toggle {
+            position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+            background: transparent; border: none; cursor: pointer;
+            font-size: 16px; padding: 4px 8px; color: var(--accent-purple); border-radius: 6px;
+        }
+        .demo-pw-toggle:hover { background: rgba(139, 92, 246, 0.15); }
+        .demo-input-row > .demo-btn { flex: 0 0 auto; }
+        .demo-hint { font-size: 11px; margin-top: 8px; color: #28a745; min-height: 16px; }
+        .demo-hint.warn { color: #ffc107; }
+        .demo-hint.err { color: #f48771; }
+
+        /* STATUS BAR */
+        .demo-status-bar {
+            background: rgba(0,0,0,0.4); color: var(--accent-cyan);
+            padding: 10px 14px; border-radius: 10px; font-size: 11.5px;
+            font-family: 'JetBrains Mono', monospace; text-align: center;
+            border: 1px solid rgba(94, 234, 212, 0.2);
+        }
+
+        /* VULN REPORT */
+        .demo-vuln {
+            background: rgba(0,0,0,0.4); border-radius: 16px; padding: 16px;
+            margin-top: 14px; border: 1px solid rgba(220, 53, 69, 0.3);
+            animation: demoSlide 0.3s;
+        }
+        @keyframes demoSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .demo-vuln-title {
+            font-weight: 800; font-size: 14px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--accent-pink);
+        }
+        .demo-vuln-title button {
+            background: none; border: none; color: #9ca3af;
+            font-size: 20px; cursor: pointer; padding: 0 6px;
+        }
+        .demo-vuln-item {
+            background: rgba(220, 53, 69, 0.1); border-left: 3px solid #dc3545;
+            padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; font-size: 12px;
+        }
+        .demo-vuln-item.warn { background: rgba(255, 193, 7, 0.08); border-left-color: #ffc107; }
+        .demo-vuln-item.info { background: rgba(23, 162, 184, 0.08); border-left-color: #17a2b8; }
+        .demo-vuln-item strong { color: #FBCFE8; }
+        .demo-vuln-item p { color: #c9d1e6; font-size: 11.5px; margin-top: 4px; }
+        .demo-vuln-item .severity { font-size: 10px; margin-top: 6px; font-weight: 700; color: #dc3545; }
+        .demo-suggest {
+            background: rgba(0,0,0,0.4); border-radius: 16px; padding: 16px;
+            margin-top: 14px; border: 1px solid rgba(23, 162, 184, 0.3);
+            animation: demoSlide 0.3s;
+        }
+        .demo-suggest-title {
+            font-weight: 800; font-size: 14px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--accent-cyan);
+        }
+        .demo-suggest-title button {
+            background: none; border: none; color: #9ca3af;
+            font-size: 20px; cursor: pointer; padding: 0 6px;
+        }
+        .demo-suggest-item {
+            background: rgba(23, 162, 184, 0.08); border-radius: 10px; padding: 10px 12px;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
+        .demo-suggest-num {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: linear-gradient(135deg, #8B5CF6, #D946EF);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 12px;
+        }
+        .demo-suggest-pw {
+            font-family: 'JetBrains Mono', monospace; background: #0F1220;
+            color: #ffc107; padding: 6px 10px; border-radius: 8px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .demo-suggest-strength {
+            font-size: 10px; padding: 3px 8px; border-radius: 10px;
+            background: #28a745; color: white; font-weight: 700;
+        }
+
+        /* DIRB ITEMS */
+        .demo-dirb-item {
+            background: rgba(23, 162, 184, 0.08); border-left: 3px solid #17a2b8;
+            padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 10px; flex-wrap: wrap; font-size: 11.5px;
+        }
+        .demo-dirb-item a { color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; text-decoration: none; word-break: break-all; }
+        .demo-dirb-item a:hover { text-decoration: underline; }
+        .demo-dirb-code {
+            background: #28a745; color: white; padding: 2px 8px;
+            border-radius: 10px; font-size: 10px; font-weight: 700;
+        }
+        .demo-dirb-code.redirect { background: #ffc107; color: #333; }
+        .demo-dirb-code.forbidden { background: #dc3545; }
+
+        /* CLASS DETAILS */
+        .class-detail {
+            background: rgba(0, 0, 0, 0.4); border-radius: 24px; padding: 24px; margin: 28px 0;
+            border-left: 4px solid var(--accent-purple);
+        }
+        .class-name { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: var(--accent-pink); margin-bottom: 12px; }
+        .method-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 15px; }
+        .method-item { background: rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 10px; font-size: 0.8rem; }
+        .method-name { font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); font-weight: 600; }
+
+        /* TERMINAL PREVIEW */
+        .terminal-preview {
+            background: var(--bg-terminal); border-radius: 20px; padding: 20px; margin: 36px 0;
+            border: 1px solid #2D2A5A; font-family: 'JetBrains Mono', monospace;
+        }
+        .terminal-line { color: var(--accent-cyan); margin-bottom: 8px; font-size: 0.8rem; }
+
+        /* FLOWCHART */
+        .flowchart {
+            background: rgba(0,0,0,0.3); border-radius: 24px; padding: 30px;
+            margin: 30px 0; text-align: center; overflow-x: auto;
+        }
+        .flow-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; margin: 15px 0; gap: 15px; }
+        .flow-box {
+            background: linear-gradient(135deg, #1E1B3A, #2D2A5A); border-radius: 16px;
+            padding: 12px 20px; min-width: 150px; text-align: center; font-weight: 500;
+        }
+        .flow-arrow { font-size: 1.5rem; color: var(--accent-purple); }
+
+        /* API TABLE */
+        .api-table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); border-radius: 16px; overflow: hidden; }
+        .api-table th, .api-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(139, 92, 246, 0.2); }
+        .api-table th { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .api-table code { background: #1E1B3A; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem; }
+
+        /* DB SHOW */
+        .db-show { background: rgba(0,0,0,0.3); border-radius: 28px; padding: 20px; margin: 30px 0; }
+        .db-entry { font-family: monospace; font-size: 0.75rem; padding: 6px 0; border-bottom: 1px dashed #4b3b7a; }
+
+        /* STATS */
+        .stats-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin: 30px 0; }
+        .stat-card { background: rgba(139, 92, 246, 0.1); border-radius: 20px; padding: 20px; text-align: center; min-width: 140px; }
+        .stat-number { font-size: 1.9rem; font-weight: 800; color: var(--accent-purple); }
+
+        /* ADMIN CARD */
+        .admin-card {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(25, 30, 45, 0.6); border-radius: 48px;
+            padding: 20px; margin: 30px 0; flex-wrap: wrap;
+        }
+        .admin-card img { width: 80px; border-radius: 50%; border: 2px solid var(--accent-pink); }
+        .contact-links { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+        .fb-link, .telegram-link {
+            padding: 8px 20px; border-radius: 40px; color: white; text-decoration: none;
+            font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .fb-link { background: #1877F2; }
+        .telegram-link { background: #26A5E4; }
+        .fb-link:hover, .telegram-link:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+        /* DISCLAIMER */
+        .disclaimer {
+            background: #1E1B3A80; border-left: 4px solid #F97316;
+            padding: 20px; border-radius: 24px; margin: 40px 0; font-size: 0.78rem;
+        }
+
+        /* OPEN SOURCE NOTE */
+        .open-source-note {
+            background: rgba(0, 255, 196, 0.08); border-radius: 28px; padding: 24px;
+            margin: 30px 0; text-align: center; border: 1px solid rgba(0, 255, 200, 0.3);
+        }
+        .open-source-note i { font-size: 2rem; color: #2DD4BF; margin-bottom: 12px; }
+
+        /* TOC */
+        .toc { background: rgba(0,0,0,0.3); border-radius: 24px; padding: 20px 30px; margin: 30px 0; }
+        .toc ul { display: flex; flex-wrap: wrap; gap: 20px; list-style: none; justify-content: center; }
+        .toc a { color: var(--accent-purple); text-decoration: none; }
+
+        footer {
+            text-align: center; padding: 30px 0;
+            border-top: 1px solid rgba(110, 90, 200, 0.3);
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 800px) {
+            .container { padding: 0 18px; }
+            .hero .error-code { font-size: 5rem; }
+            .hero h2 { font-size: 1.6rem; }
+            .section-header { font-size: 1.5rem; }
+            .demo-section { padding: 20px 14px; border-radius: 20px; }
+            .demo-net-header, .demo-net-item { grid-template-columns: 36px 1fr 110px 60px; font-size: 10.5px; gap: 6px; padding: 8px 8px; }
+            .demo-lan-header, .demo-lan-item { grid-template-columns: 100px 1fr 70px; font-size: 10.5px; }
+            .demo-input-row { flex-direction: column; align-items: stretch; }
+            .demo-pw-wrapper { flex: 1 1 auto; }
+            .demo-input-row > .demo-btn { width: 100%; }
+            .demo-pw-wrapper input { font-size: 16px; }
+            .demo-term-body { height: 180px; font-size: 10.5px; }
+            .demo-btn { padding: 9px 12px; font-size: 11px; }
+            .demo-modal-footer { flex-direction: column; }
+            .demo-modal-footer button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-aura"></div>
+<div class="bg-grid"></div>
+
+<div class="container">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>⚡ ACDV-Teams WiFi Tool</h1>
+            <span>GHOST PROTOCOL • ZERO TRUST • PENTEST v3.4</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#tong-quan">Tổng quan</a></li>
+            <li><a href="#demo">🎮 Demo</a></li>
+            <li><a href="#classes">Classes</a></li>
+            <li><a href="#flowchart">Luồng</a></li>
+            <li><a href="#api">API</a></li>
+            <li><a href="#database">Database</a></li>
+            <li><a href="#about">Tác giả</a></li>
+            <li><a href="#disclaimer">Disclaimer</a></li>
+        </ul>
+    </nav>
+
+    <!-- TOC -->
+    <div class="toc">
+        <ul>
+            <li><a href="#tong-quan">📖 Tổng quan</a></li>
+            <li><a href="#demo">🎮 Demo 1:1</a></li>
+            <li><a href="#congcu">📦 cong_cu.py</a></li>
+            <li><a href="#pws">⚡ pws.py (WPS)</a></li>
+            <li><a href="#server">🌐 server.py</a></li>
+            <li><a href="#main">🚀 main.py</a></li>
+            <li><a href="#flowchart">🔄 Sequence</a></li>
+            <li><a href="#api">📡 API</a></li>
+        </ul>
+    </div>
+
+    <!-- HERO / 404 -->
+    <section id="tong-quan" class="hero">
+        <div class="error-code">404</div>
+        <h2>Trang bạn tìm không tồn tại!</h2>
+        <p>Nhưng đừng lo — đây là <strong>ACDV-Teams WiFi Security Tool v3.4</strong>, phiên bản mới nhất với <strong>Progress Bar %</strong>, <strong>Modal Input dùng chung</strong>, <strong>Module Panel UI riêng</strong>, và hệ thống <strong>Plugin động</strong>. Hãy khám phá các tính năng bên dưới hoặc quay lại <a href="/" style="color: var(--accent-purple); font-weight: 700;">trang chủ</a>.</p>
+
+        <div class="badge-group">
+            <span class="tech-badge"><i class="fab fa-python"></i> Python 3</span>
+            <span class="tech-badge"><i class="fas fa-terminal"></i> Async Subprocess</span>
+            <span class="tech-badge"><i class="fas fa-lock"></i> XOR + SHA256</span>
+            <span class="tech-badge"><i class="fab fa-android"></i> Android Root / Termux</span>
+            <span class="tech-badge"><i class="fas fa-globe"></i> WebSocket</span>
+            <span class="tech-badge"><i class="fas fa-chart-line"></i> Progress Bar</span>
+            <span class="tech-badge"><i class="fas fa-puzzle-piece"></i> Plugin Architecture</span>
+        </div>
+
+        <div class="cta-group">
+            <a href="/" class="cta-btn cta-primary"><i class="fas fa-home"></i> Về trang chủ</a>
+            <a href="#demo" class="cta-btn cta-secondary"><i class="fas fa-play-circle"></i> Trải nghiệm Demo</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">~2,480</div><div>Dòng code</div></div>
+            <div class="stat-card"><div class="stat-number">6</div><div>Modules chính</div></div>
+            <div class="stat-card"><div class="stat-number">10+</div><div>Classes</div></div>
+            <div class="stat-card"><div class="stat-number">32+</div><div>Methods</div></div>
+        </div>
+    </section>
+
+    <!-- DEMO 1:1 -->
+    <section id="demo" class="demo-section">
+        <h2 class="section-header" style="margin-top:0;"><i class="fas fa-play-circle"></i> Demo 1:1 - Trải nghiệm giao diện v3.4</h2>
+
+        <div class="demo-notice">
+            <i class="fas fa-info-circle"></i>
+            <strong>CHẾ ĐỘ DEMO:</strong> Đây là bản mô phỏng giao diện 1:1 với tool thật. Tất cả dữ liệu WiFi, thiết bị LAN, mật khẩu, kết quả WPS đều là <strong>giả lập</strong>. Không có kết nối thật nào được thực hiện. Bạn có thể tự do nhấn nút, chọn mạng, nhập mật khẩu để trải nghiệm UI/UX. <strong>v3.4</strong> có thêm <strong>Progress Bar %</strong>, <strong>Modal Input</strong>, <strong>Module Panel</strong> và <strong>nhiều module mới</strong>.
+        </div>
+
+        <!-- TERMINAL -->
+        <div class="demo-terminal">
+            <div class="demo-term-bar">
+                <span class="demo-dot red"></span>
+                <span class="demo-dot yellow"></span>
+                <span class="demo-dot green"></span>
+                <span class="demo-term-title">ACDV-Teams Terminal v3.4 (DEMO MODE)</span>
+                <span class="demo-ws-status"><span class="demo-ws-dot"></span>Connected</span>
+                <button class="demo-clear-btn" onclick="demoClearTerminal()">🗑️ Clear</button>
+            </div>
+            <div class="demo-term-body" id="demoTerminal"></div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="demo-btn-grid">
+            <button class="demo-btn blue" id="dBtnScan" onclick="demoScan()">📡 Quét WiFi</button>
+            <button class="demo-btn cyan" id="dBtnLan" onclick="demoLanScan()">🌐 Quét LAN</button>
+            <button class="demo-btn purple" id="dBtnDirb" onclick="demoDirb()">🔍 Quét Dirb</button>
+            <button class="demo-btn green" id="dBtnClear" onclick="demoClearCard()">🔄 Giải phóng WiFi</button>
+            <button class="demo-btn yellow" id="dBtnQuit" onclick="demoEnableWifi()">🔌 Bật lại WiFi</button>
+            <button class="demo-btn gray" id="dBtnInstall" onclick="demoInstallModule()">📥 Cài Module</button>
+        </div>
+
+        <!-- STOP -->
+        <div class="demo-stop-container" id="dStopContainer">
+            <button onclick="demoStopTask()">⏹️ ĐANG DỪNG TÁC VỤ... (nhấn để dừng)</button>
+        </div>
+
+        <!-- PROGRESS -->
+        <div class="demo-progress-wrap" id="dProgressWrap">
+            <div class="demo-progress-outer">
+                <div class="demo-progress-inner" id="dProgressInner"></div>
+            </div>
+            <div class="demo-progress-label" id="dProgressLabel">0%</div>
+        </div>
+
+        <!-- NETWORK & LAN CONTAINERS -->
+        <div id="dNetworkContainer"></div>
+        <div id="dLanContainer" style="display:none;"></div>
+        <div id="dDirbContainer" style="display:none;"></div>
+
+        <!-- INPUT GROUP -->
+        <div class="demo-input-group">
+            <label class="demo-input-label">🔑 Mật khẩu WiFi:</label>
+            <div class="demo-input-row">
+                <div class="demo-pw-wrapper">
+                    <input type="password" id="dPwInput" placeholder="Nhập mật khẩu hoặc để trống..." disabled autocomplete="off" spellcheck="false">
+                    <button class="demo-pw-toggle" id="dPwToggle" onclick="demoTogglePw()" disabled title="Hiện/Ẩn mật khẩu">👁️</button>
+                </div>
+                <button class="demo-btn blue" id="dBtnConnect" onclick="demoConnect()" disabled>🔐 Kết Nối</button>
+                <button class="demo-btn yellow" id="dBtnWps" onclick="demoWps()" disabled>⚡ WPS</button>
+                <button class="demo-btn cyan" id="dBtnAuto" onclick="demoAutoConnect()" disabled>🔄 Auto</button>
+            </div>
+            <div class="demo-hint" id="dHint"></div>
+        </div>
+
+        <!-- MAIN RESULT -->
+        <div class="demo-main-result" id="dMainResult">
+            <div class="demo-main-result-header">
+                <h3 id="dResultTitle">📊 KẾT QUẢ MODULE</h3>
+                <button class="demo-main-result-close" onclick="demoCloseMainResult()">×</button>
+            </div>
+            <div class="demo-main-result-body" id="dResultBody"></div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="demo-status-bar" id="dStatus">[DEMO] Sẵn sàng — Nhấn "Quét WiFi" để bắt đầu</div>
+    </section>
+
+    <!-- CLASSES / MODULES -->
+    <section id="congcu">
+        <h2 class="section-header"><i class="fas fa-tools"></i> cong_cu.py - Core Modules</h2>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-terminal"></i> class chay_terminal</div>
+            <p><strong>Mục đích:</strong> Quản lý tiến trình con bất đồng bộ, đảm bảo mỗi lần chỉ một lệnh active, tránh xung đột.</p>
+            <h4>📋 Phương thức:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">run_cmd(command, **kwargs)</span> - Chạy lệnh shell, không block, trả về dict trạng thái</div>
+                <div class="method-item"><span class="method-name">dang_chay()</span> - Đọc stdout từ tiến trình đang chạy, trả về khi kết thúc</div>
+                <div class="method-item"><span class="method-name">dang_thuc_su_chay()</span> - Kiểm tra tiến trình còn sống không</div>
+                <div class="method-item"><span class="method-name">dung_terminal()</span> - Dừng tiến trình (SIGINT/killpg)</div>
+            </div>
+            <p><strong>🔧 Cơ chế:</strong> Dùng <code>subprocess.Popen</code> với <code>preexec_fn=os.setsid</code> để tạo process group, hỗ trợ kill toàn bộ tiến trình con.</p>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-wifi"></i> class WifiManager</div>
+            <p><strong>Mục đích:</strong> Điều khiển card WiFi, quét mạng, kết nối, auto connect thông minh.</p>
+            <h4>📋 Thuộc tính:</h4>
+            <ul style="margin-left: 30px; margin-bottom: 15px;">
+                <li><code>interface</code> - Giao diện mạng (mặc định "wlan0")</li>
+                <li><code>original_mac</code> - MAC gốc để khôi phục</li>
+                <li><code>target_ssid</code> - SSID đang cố kết nối</li>
+            </ul>
+            <h4>📋 Phương thức chính:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">scan()</span> - Quét WiFi, trả về list {ssid, bssid, rssi, quality, security, is_wps, vendor, band}</div>
+                <div class="method-item"><span class="method-name">connect(ssid, password, security)</span> - Kết nối WiFi, xác minh SSID thực tế</div>
+                <div class="method-item"><span class="method-name">connect_auto(result_data, ten, auto_change_mac)</span> - Auto connect từ database, tối ưu thứ tự mật khẩu</div>
+                <div class="method-item"><span class="method-name">change_mac(new_mac)</span> - Đổi địa chỉ MAC ngẫu nhiên</div>
+                <div class="method-item"><span class="method-name">set_status(mode)</span> - Bật/tắt WiFi (svc wifi enable/disable)</div>
+                <div class="method-item"><span class="method-name">restart()</span> - Khởi động lại card WiFi</div>
+            </div>
+            <h4>🔍 Auto Connect chi tiết:</h4>
+            <p>1. Tìm SSID trong database → dùng mật khẩu đó.<br>
+            2. Nếu không, lấy danh sách password UNIQUE từ database.<br>
+            3. Sắp xếp theo tần suất xuất hiện (phổ biến nhất trước).<br>
+            4. Thử từng password, chỉ thử mỗi pass 1 lần.<br>
+            5. Nếu thất bại và auto_change_mac=True → đổi MAC, thử lại tối đa 3 lần.</p>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-database"></i> class FileManager</div>
+            <p><strong>Mục đích:</strong> Đọc/ghi file với mã hóa XOR, kiểm tra toàn vẹn bằng SHA256, định dạng ACDV độc quyền.</p>
+            <h4>📋 Cấu trúc file ACDV:</h4>
+            <div class="terminal-preview" style="margin: 10px 0;">
+                <div class="terminal-line">┌──────────────┬──────────┬────────────┬──────────┬─────────────────┐</div>
+                <div class="terminal-line">│ Fingerprint  │ Header   │   Hash     │  Data    │    Magic End    │</div>
+                <div class="terminal-line">│ (3 bytes)    │ Len(2) + │  (64 bytes)│(encrypted)│   (2 bytes)     │</div>
+                <div class="terminal-line">│ 0xAC 0x44 0x56│ JSON    │  SHA256    │ XOR 0x69  │   0x55 0xAA     │</div>
+                <div class="terminal-line">└──────────────┴──────────┴────────────┴──────────┴─────────────────┘</div>
+            </div>
+            <h4>📋 Phương thức:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">save_file(filename, content, data_type, who_am_i)</span> - Lưu file với mã hóa và chữ ký</div>
+                <div class="method-item"><span class="method-name">read_file(filename)</span> - Đọc file, giải mã, xác thực hash</div>
+                <div class="method-item"><span class="method-name">sync_and_upgrade_database(filename)</span> - Nâng cấp DB lên version mới (thêm password_id)</div>
+                <div class="method-item"><span class="method-name">get_unique_passwords(filename)</span> - Lấy danh sách password UNIQUE</div>
+                <div class="method-item"><span class="method-name">get_password_by_id(filename, password_id)</span> - Lấy thông tin password theo ID</div>
+            </div>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-network-wired"></i> class NetworkScanner</div>
+            <p><strong>Mục đích:</strong> Quét mạng LAN đa vòng, phát hiện thiết bị, quét cổng, dự đoán OS, cache RAM + lọc trùng lặp.</p>
+            <h4>📋 Phương thức:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">scan_network(ports, fast_mode, scan_rounds, reset_cache)</span> - Quét toàn bộ mạng LAN (mặc định 3 vòng)</div>
+                <div class="method-item"><span class="method-name">scan_network_nmap(mode)</span> - Quét LAN bằng nmap (fast/normal/thorough/stealth)</div>
+                <div class="method-item"><span class="method-name">quick_scan()</span> - Quét nhanh chỉ HTTP/HTTPS (2 vòng)</div>
+                <div class="method-item"><span class="method-name">scan_specific_host(target_ip, ports, port_timeout)</span> - Quét một host cụ thể</div>
+                <div class="method-item"><span class="method-name">_merge_host_into_cache(ip, data)</span> - Gộp dữ liệu host vào cache, union ports</div>
+                <div class="method-item"><span class="method-name">get_cache() / clear_cache()</span> - Lấy/xóa cache RAM</div>
+            </div>
+            <h4>⚡ Tối ưu hóa:</h4>
+            <p>- <strong>Cache RAM static:</strong> Lưu kết quả giữa các vòng quét, tránh quét lại host đã biết.<br>
+            - <strong>Nhiều vòng quét:</strong> Tăng độ phủ, phát hiện host chậm phản hồi.<br>
+            - <strong>Merge port:</strong> Nếu host được phát hiện lại, union cổng mở + đếm hits.<br>
+            - <strong>Song song hóa:</strong> Ping 30 host và quét 15 cổng cùng lúc.<br>
+            - <strong>⭐ v3.4:</strong> Emit progress % qua <code>emit_progress()</code>.</p>
+        </div>
+    </section>
+
+    <!-- MODULE PWS.PY -->
+    <section id="pws">
+        <h2 class="section-header"><i class="fas fa-bolt"></i> pws.py - WPS Attack Engine</h2>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-microchip"></i> class WPSpin</div>
+            <p><strong>Mục đích:</strong> Tạo PIN WPS dựa trên MAC address (hỗ trợ 20+ algorithm).</p>
+            <h4>📋 Các loại algorithm:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">ALGO_MAC</span> - PIN dựa trên MAC (24-bit, 28-bit, 32-bit, D-Link, ASUS)</div>
+                <div class="method-item"><span class="method-name">ALGO_EMPTY</span> - PIN rỗng</div>
+                <div class="method-item"><span class="method-name">ALGO_STATIC</span> - PIN tĩnh (Cisco, Broadcom, Realtek, Edimax, Thomson...)</div>
+            </div>
+            <h4>📋 Phương thức:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">generate(algo, mac)</span> - Tạo PIN 8 số từ algorithm và MAC</div>
+                <div class="method-item"><span class="method-name">getSuggested(mac)</span> - Lấy PIN gợi ý dựa trên OUI</div>
+                <div class="method-item"><span class="method-name">checksum(pin)</span> - Tính checksum chuẩn WPS</div>
+            </div>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-robot"></i> class Companion</div>
+            <p><strong>Mục đích:</strong> Main WPS attack engine, điều khiển wpa_supplicant, thu thập dữ liệu Pixie Dust.</p>
+            <h4>📋 Quy trình tấn công:</h4>
+            <div class="terminal-preview" style="margin: 10px 0;">
+                <div class="terminal-line">1. Khởi động wpa_supplicant -K -d (log keys)</div>
+                <div class="terminal-line">2. Gửi WPS_REG bssid pin → wpa_supplicant</div>
+                <div class="terminal-line">3. Thu thập PKE, PKR, E-Hash1, E-Hash2, AuthKey, E-Nonce</div>
+                <div class="terminal-line">4. Chạy pixiewps --pke ... --pkr ... --e-hash1 ... --e-hash2 ...</div>
+                <div class="terminal-line">5. Nếu tìm được PIN → thử lại với PIN đó</div>
+                <div class="terminal-line">6. Thành công → lấy WPA PSK từ "Network Key"</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVER -->
+    <section id="server">
+        <h2 class="section-header"><i class="fas fa-server"></i> server.py - WebSocket + HTTP Server</h2>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-scroll"></i> class TerminalLogger</div>
+            <p><strong>Mục đích:</strong> Quản lý log terminal, lưu file, gửi real-time qua WebSocket.</p>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">write(text, is_command)</span> - Ghi log + timestamp + gửi WebSocket</div>
+                <div class="method-item"><span class="method-name">clear()</span> - Xóa terminal log</div>
+            </div>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-brain"></i> class WiFiCommandHandler</div>
+            <p><strong>Mục đích:</strong> Xử lý logic chính, khởi tạo WifiManager, NetworkScanner, FileManager.</p>
+            <h4>📋 Trạng thái flags:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">is_processing</span> - Đang xử lý task</div>
+                <div class="method-item"><span class="method-name">scanning</span> - Đang quét WiFi</div>
+                <div class="method-item"><span class="method-name">connecting</span> - Đang kết nối</div>
+                <div class="method-item"><span class="method-name">wps_attacking</span> - Đang tấn công WPS</div>
+                <div class="method-item"><span class="method-name">lan_scanning</span> - Đang quét LAN</div>
+            </div>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-exchange-alt"></i> class WebSocketServer</div>
+            <p><strong>Mục đích:</strong> WebSocket server real-time, xử lý command từ client.</p>
+            <h4>📋 Cơ chế Stop task:</h4>
+            <div class="terminal-preview" style="margin: 10px 0;">
+                <div class="terminal-line">Khi nhận lệnh "stop" hoặc "stop_task":</div>
+                <div class="terminal-line">→ pkill -9 wpa_supplicant, pixiewps, iw, ping, nc</div>
+                <div class="terminal-line">→ rm -rf /data/local/tmp/wpa_ctrl_*</div>
+                <div class="terminal-line">→ svc wifi disable/enable (khôi phục WiFi)</div>
+                <div class="terminal-line">→ Reset flags (is_processing = false)</div>
+                <div class="terminal-line">→ Server vẫn chạy, có thể tiếp tục thao tác</div>
+            </div>
+            <h4>📋 Các command handler:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">_handle_scan_async()</span> - Quét WiFi</div>
+                <div class="method-item"><span class="method-name">_handle_lan_scan_async()</span> - Quét LAN đa vòng</div>
+                <div class="method-item"><span class="method-name">_handle_connect_with_password_async()</span> - Kết nối với mật khẩu</div>
+                <div class="method-item"><span class="method-name">_handle_wps_attack_async()</span> - Tấn công WPS</div>
+                <div class="method-item"><span class="method-name">_handle_auto_connect_async()</span> - Auto connect từ database</div>
+                <div class="method-item"><span class="method-name">_handle_dirb_async()</span> - Quét thư mục ẩn (Dirb)</div>
+                <div class="method-item"><span class="method-name">_handle_shutdown_async()</span> - Tắt tool hoàn toàn</div>
+                <div class="method-item"><span class="method-name">_stop_current_task_immediately()</span> - Dừng task ngay lập tức</div>
+                <div class="method-item"><span class="method-name">_handle_client_disconnect()</span> - ⭐ v3.4: Xử lý WS mất kết nối giữa task</div>
+                <div class="method-item"><span class="method-name">_check_and_reset_stale_session()</span> - ⭐ v3.4: Auto-reset session cũ khi start</div>
+            </div>
+            <h4>🛡️ Cơ chế Module Blocking (v3.4):</h4>
+            <div class="terminal-preview" style="margin: 10px 0;">
+                <div class="terminal-line">WS disconnect giữa task:</div>
+                <div class="terminal-line">→ cleanup_orphan_processes() (kill hết process rác)</div>
+                <div class="terminal-line">→ module_hang_counts[module]++</div>
+                <div class="terminal-line">→ Nếu >= max_hangs (3): blocked_modules.add(module)</div>
+                <div class="terminal-line">→ Client nhận blocked_modules → block nút module</div>
+                <div class="terminal-line">→ Restart tool hoặc reset_blocks để mở khóa</div>
+            </div>
+        </div>
+
+        <div class="class-detail">
+            <div class="class-name"><i class="fas fa-layer-group"></i> class BaseModule (⭐ v3.4)</div>
+            <p><strong>Mục đích:</strong> Interface chuẩn cho mọi plugin module. Cung cấp helper mới cho progress và UI panel.</p>
+            <h4>📋 Helper mới v3.4:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">emit_progress(pct, label)</span> - Gửi tiến trình % tới client (pct=None để ẩn)</div>
+                <div class="method-item"><span class="method-name">render_panel(panel_dict, title)</span> - Gửi UI panel riêng render trong main result</div>
+                <div class="method-item"><span class="method-name">self.resource.load(default_config)</span> - Nạp JSON config, tự sinh nếu chưa có</div>
+                <div class="method-item"><span class="method-name">self.resource.resolve_all(key)</span> - List path từ glob (wordlists)</div>
+            </div>
+            <h4>📋 Class attributes:</h4>
+            <div class="method-list">
+                <div class="method-item"><span class="method-name">name</span> - Tên duy nhất (snake_case)</div>
+                <div class="method-item"><span class="method-name">commands</span> - List commands xử lý</div>
+                <div class="method-item"><span class="method-name">ui_buttons</span> - List nút tự khai báo</div>
+                <div class="method-item"><span class="method-name">category / category_label / category_icon</span> - Menu nav</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLOWCHART -->
+    <section id="flowchart">
+        <h2 class="section-header"><i class="fas fa-project-diagram"></i> Sequence Diagram - Luồng hoạt động</h2>
+
+        <h3>📡 Tấn công WPS</h3>
+        <div class="flowchart">
+            <div class="flow-row">
+                <div class="flow-box">Client</div>
+                <div class="flow-arrow">→ wps_attack →</div>
+                <div class="flow-box">WebSocketServer</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">_handle_wps_attack_async()</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">tan_cong_wps_with_cleanup()</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">svc wifi disable</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Companion.single_connection()</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">wpa_supplicant -K -d</div>
+                <div class="flow-arrow">↔</div>
+                <div class="flow-box">WPS_REG bssid pin</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Thu thập PKE, PKR, E-Hash...</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">pixiewps --pke... --pkr...</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Tìm được PIN</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Thử lại → WPA PSK</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">Lưu vào DB</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">svc wifi enable</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Trả kết quả về client</div>
+            </div>
+        </div>
+
+        <h3>⏹️ Dừng task (Stop)</h3>
+        <div class="flowchart">
+            <div class="flow-row">
+                <div class="flow-box">Client nhấn Stop/ESC</div>
+                <div class="flow-arrow">→ stop →</div>
+                <div class="flow-box">WebSocketServer</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row"><div class="flow-box">_stop_current_task_immediately()</div></div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">pkill -9 wpa_supplicant</div>
+                <div class="flow-arrow">+</div>
+                <div class="flow-box">pkill -9 pixiewps</div>
+                <div class="flow-arrow">+</div>
+                <div class="flow-box">pkill -9 iw</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">rm -rf /tmp/wpa_ctrl_*</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">svc wifi disable/enable</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">Reset flags → is_processing = false</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Server vẫn chạy ✅</div>
+            </div>
+        </div>
+
+        <h3>📊 Progress Bar Flow (⭐ v3.4)</h3>
+        <div class="flowchart">
+            <div class="flow-row">
+                <div class="flow-box">Module.handle()</div>
+                <div class="flow-arrow">→ emit_progress(50, "50/100")</div>
+                <div class="flow-box">BaseModule</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">broadcast {type:"progress", pct:50, label}</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">WebSocketServer</div>
+            </div>
+            <div class="flow-row"><div class="flow-arrow">↓</div></div>
+            <div class="flow-row">
+                <div class="flow-box">Client nhận → showProgress(50)</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Thanh % cập nhật 50%</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">Main Result</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API -->
+    <section id="api">
+        <h2 class="section-header"><i class="fas fa-plug"></i> WebSocket API</h2>
+
+        <p><strong>Kết nối:</strong> <code>ws://[server_ip]:[http_port+1]</code> (ví dụ: ws://192.168.1.100:8081)</p>
+
+        <h3>📨 Lệnh từ Client → Server</h3>
+        <table class="api-table">
+            <thead><tr><th>Command</th><th>Params</th><th>Mô tả</th></tr></thead>
+            <tbody>
+                <tr><td><code>scan</code></td><td><code>{}</code></td><td>Quét WiFi</td></tr>
+                <tr><td><code>lan_scan</code></td><td><code>{mode: "fast|normal|thorough|stealth"}</code></td><td>Quét LAN (nmap 4 chế độ)</td></tr>
+                <tr><td><code>lan_quick_scan</code></td><td><code>{}</code></td><td>Quét nhanh LAN (HTTP/HTTPS)</td></tr>
+                <tr><td><code>scan_specific_host</code></td><td><code>{target_ip: "192.168.1.1"}</code></td><td>Quét một host</td></tr>
+                <tr><td><code>dirb</code></td><td><code>{url: "http://192.168.1.1"}</code></td><td>Quét thư mục ẩn</td></tr>
+                <tr><td><code>connect_with_password</code></td><td><code>{network: {...}, password: "..."}</code></td><td>Kết nối với mật khẩu</td></tr>
+                <tr><td><code>wps_attack</code></td><td><code>{network: {...}}</code></td><td>Tấn công WPS</td></tr>
+                <tr><td><code>auto_connect</code></td><td><code>{network: {...}}</code></td><td>Auto connect từ database</td></tr>
+                <tr><td><code>stop</code> / <code>stop_task</code></td><td><code>{}</code></td><td><strong>Dừng task đang chạy</strong></td></tr>
+                <tr><td><code>shutdown</code></td><td><code>{}</code></td><td><strong>Tắt tool hoàn toàn</strong></td></tr>
+                <tr><td><code>clear_all</code></td><td><code>{}</code></td><td>Giải phóng card WiFi</td></tr>
+                <tr><td><code>quit</code></td><td><code>{}</code></td><td>Bật lại WiFi</td></tr>
+                <tr><td><code>clear_terminal</code></td><td><code>{}</code></td><td>Xóa terminal log</td></tr>
+                <tr><td><code>get_status</code></td><td><code>{}</code></td><td>Lấy trạng thái hệ thống</td></tr>
+                <tr><td><code>reset_blocks</code> ⭐</td><td><code>{}</code></td><td><strong>Mở khóa module bị block (v3.4)</strong></td></tr>
+                <tr><td><code>install_module</code> ⭐</td><td><code>{source_path|url|content_b64, filename, overwrite, restart}</code></td><td><strong>Cài module plugin mới (v3.4)</strong></td></tr>
+                <tr><td><code>list_modules</code> ⭐</td><td><code>{}</code></td><td><strong>Liệt kê module hiện có (v3.4)</strong></td></tr>
+                <tr><td><code>uninstall_module</code> ⭐</td><td><code>{name}</code></td><td><strong>Xóa module (v3.4)</strong></td></tr>
+                <tr><td><code>restart_tool</code> ⭐</td><td><code>{}</code></td><td><strong>Khởi động lại tool (v3.4)</strong></td></tr>
+            </tbody>
+        </table>
+
+        <h3>📨 Response từ Server → Client</h3>
+        <table class="api-table">
+            <thead><tr><th>Type</th><th>Nội dung</th></tr></thead>
+            <tbody>
+                <tr><td><code>status</code></td><td>Trạng thái hệ thống (is_processing, current_task, task_info, blocked_modules, module_hang_counts)</td></tr>
+                <tr><td><code>networks</code></td><td>Danh sách mạng WiFi sau scan</td></tr>
+                <tr><td><code>lan_devices</code></td><td>Danh sách thiết bị LAN</td></tr>
+                <tr><td><code>dirb_result</code></td><td>Kết quả quét thư mục ẩn</td></tr>
+                <tr><td><code>result</code></td><td>Kết quả thực thi lệnh</td></tr>
+                <tr><td><code>log</code></td><td>Log real-time</td></tr>
+                <tr><td><code>busy</code></td><td>Hệ thống đang bận</td></tr>
+                <tr><td><code>error</code></td><td>Lỗi</td></tr>
+                <tr><td><code>progress</code> ⭐</td><td><strong>Tiến trình % (v3.4)</strong>: <code>{pct, label}</code></td></tr>
+                <tr><td><code>module_panel</code> ⭐</td><td><strong>UI panel riêng (v3.4)</strong>: <code>{title, panel:{html, actions}}</code></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- DATABASE -->
+    <section id="database">
+        <h2 class="section-header"><i class="fas fa-database"></i> Database networks.acdv</h2>
+
+        <div class="db-show">
+            <div class="db-entry"><i class="fas fa-fingerprint"></i> [ACDV-File] Fingerprint: 0xAC 0x44 0x56 | Mã hóa XOR (key=0x69) | SHA256</div>
+            <div class="db-entry">📌 <strong>Cấu trúc record (sau giải mã):</strong></div>
+            <div class="db-entry">"0": ["20:BE:B4:73:EE:A5", "Tieu Vy", "12345678", "WPA2", "0"]</div>
+            <div class="db-entry">"1": ["22:BE:B4:13:EE:A5", "Cafe Vong", "88888888", "WPA2", "1"]</div>
+            <div class="db-entry">"2": ["CC:81:DA:11:22:33", "Free WiFi", "", "OPEN", "2"]</div>
+            <div class="db-entry">📂 Format: [BSSID, SSID, Password, Security, Password_ID]</div>
+        </div>
+        <p><strong>FileManager</strong> tự động đồng bộ và thêm trường <code>password_id</code> để tránh thử trùng mật khẩu khi auto connect.</p>
+    </section>
+
+    <!-- STATS -->
+    <section id="stats">
+        <h2 class="section-header"><i class="fas fa-chart-bar"></i> Thống kê code (v3.4)</h2>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">~900</div><div>server.py</div></div>
+            <div class="stat-card"><div class="stat-number">~900</div><div>cong_cu.py</div></div>
+            <div class="stat-card"><div class="stat-number">~500</div><div>pws.py</div></div>
+            <div class="stat-card"><div class="stat-number">~200</div><div>main.py</div></div>
+            <div class="stat-card"><div class="stat-number">~120</div><div>base_module.py</div></div>
+            <div class="stat-card"><div class="stat-number">~50</div><div>WifiMaster.py</div></div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="admin-card">
+            <img id="avatar" src="https://graph.facebook.com/ic.wo.de.tian/picture?type=large&width=200" alt="Vương Thiên" onerror="this.src='https://ui-avatars.com/api/?background=8B5CF6&color=fff&name=VT'">
+            <div>
+                <h3>Vương Thiên <i class="fas fa-certificate" style="color:var(--accent-pink);"></i></h3>
+                <p><strong>Founder & Lead Security Engineer</strong> | ACDV-Teams</p>
+                <p>Với hành trình <strong>tự học 10 năm</strong> trong lĩnh vực bảo mật không dây, tôi đã tự viết toàn bộ mã nguồn <strong>cong_cu.py</strong> - lõi của ACDV WiFi Security Tool, bao gồm hệ thống quản lý tiến trình, mã hóa file ACDV và các module tấn công WPS. Luôn nghiên cứu kỹ thuật pentesting tiên tiến, đóng góp vào cộng đồng an ninh mạng Việt Nam.</p>
+                <div class="contact-links">
+                    <a href="https://fb.com/ic.wo.de.tian" target="_blank" class="fb-link"><i class="fab fa-facebook"></i> fb.com/ic.wo.de.tian</a>
+                    <a href="https://t.me/wangtian99" target="_blank" class="telegram-link"><i class="fab fa-telegram-plane"></i> Telegram: @wangtian99</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OPEN SOURCE -->
+    <section id="opensource">
+        <div class="open-source-note">
+            <i class="fab fa-github"></i>
+            <h3 style="margin: 8px 0;">🌍 Hướng đến Mã nguồn mở & Cộng đồng tự học</h3>
+            <p><strong>ACDV-Teams WiFi Tool</strong> được xây dựng với tinh thần <strong>chia sẻ tri thức</strong>. Toàn bộ logic cốt lõi (<code>cong_cu.py</code>) được viết 100% từ trải nghiệm tự học, không sao chép.</p>
+            <p>📌 <strong>Repo mã nguồn:</strong> github.com/acdv-teams/wifi-security-tool<br>
+            🔥 <strong>#OpenSourceForLearning #EthicalHacking #ACDVTeams</strong></p>
+        </div>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <section id="disclaimer">
+        <div class="disclaimer">
+            <i class="fas fa-gavel" style="font-size: 1.2rem; margin-right: 10px;"></i>
+            <strong>⚠️ TUYÊN BỐ MIỄN TRỪ TRÁCH NHIỆM & SỬ DỤNG HỢP PHÁP</strong><br><br>
+            Công cụ <strong>ACDV-Teams WiFi Security Tool</strong> được phát triển với mục đích <strong>kiểm thử xâm nhập (penetration testing)</strong>, đánh giá lỗ hổng bảo mật của các mạng WiFi thuộc quyền sở hữu hoặc đã được ủy quyền bằng văn bản. Người dùng <strong>tuyệt đối không được sử dụng</strong> để tấn công, xâm nhập trái phép vào hệ thống của tổ chức/cá nhân khác. Việc lạm dụng công cụ có thể vi phạm pháp luật về an ninh mạng. ACDV-Teams và tác giả Vương Thiên không chịu trách nhiệm cho bất kỳ hậu quả pháp lý hay thiệt hại nào phát sinh từ hành vi sử dụng sai mục đích. Hãy là một hacker mũ trắng có đạo đức. <strong>#EthicalHackingOnly</strong>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2016 - 2026 ACDV-Teams | WiFi Security Tool v3.4 | Mã nguồn dựa trên cong_cu.py (tự viết) | WebSocket & Ghost Protocol</p>
+        <p><i class="fab fa-github"></i> Mã nguồn mở - Dành cho người tự học & đóng góp | <i class="fas fa-balance-scale"></i> Chỉ sử dụng trong kiểm thử bảo mật có ủy quyền.</p>
+        <p>📱 Telegram: @wangtian99 | FB: fb.com/ic.wo.de.tian</p>
+    </footer>
+</div>
+
+<!-- MODAL INPUT DÙNG CHUNG -->
+<div class="demo-modal-overlay" id="dModalOverlay">
+    <div class="demo-modal-box">
+        <div class="demo-modal-header">
+            <h3 id="dModalTitle">📥 Nhập thông tin</h3>
+            <button class="demo-modal-close" onclick="demoCloseModal()">×</button>
+        </div>
+        <div class="demo-modal-body">
+            <label id="dModalLabel" for="dModalInput">Giá trị:</label>
+            <input type="text" id="dModalInput" class="demo-modal-input" autocomplete="off">
+            <div class="demo-modal-hint" id="dModalHint"></div>
+        </div>
+        <div class="demo-modal-footer">
+            <button class="demo-btn gray" onclick="demoCloseModal()">Huỷ</button>
+            <button class="demo-btn blue" onclick="demoModalOk()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Smooth scroll
+    document.querySelectorAll('.nav-links a, .toc a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if(href && href.startsWith('#')) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if(target) target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    // Avatar fallback
+    const avatar = document.getElementById('avatar');
+    if(avatar) {
+        avatar.addEventListener('error', function() {
+            this.src = 'https://ui-avatars.com/api/?background=8B5CF6&color=fff&name=VUONG+THIEN';
+        });
+    }
+
+    // ========================================================
+    // ==================== DEMO ENGINE v3.4 ==================
+    // ========================================================
+    const DEMO = {
+        isProcessing: false,
+        currentTask: null,
+        selectedNetwork: null,
+        isFakePasswordActive: false,
+        currentFakePasswordValue: '',
+        taskTimer: null,
+        progressTimer: null,
+        progressPct: 0,
+        modalResolver: null,
+        networks: [
+            { stt: 0, ssid: 'TP-Link_2.4G',     bssid: '20:BE:B4:73:EE:A5', wps_enabled: true,  signal: '92%', security: 'wpa2', has_password: true,  savedPw: '12345678' },
+            { stt: 1, ssid: 'Viettel_Home_5G',  bssid: 'CC:81:DA:11:22:33', wps_enabled: true,  signal: '78%', security: 'wpa2', has_password: false, savedPw: null },
+            { stt: 2, ssid: 'VNPT_Fiber',       bssid: '84:DB:AC:44:55:66', wps_enabled: false, signal: '65%', security: 'wpa2', has_password: false, savedPw: null },
+            { stt: 3, ssid: 'Cafe_WiFi_Free',   bssid: 'D8:07:B6:AA:BB:CC', wps_enabled: false, signal: '54%', security: 'open', has_password: true,  savedPw: 'cafe2024' },
+            { stt: 4, ssid: 'FPT_Telecom_AP',   bssid: '00:0C:29:11:22:33', wps_enabled: true,  signal: '45%', security: 'wpa2', has_password: false, savedPw: null },
+            { stt: 5, ssid: 'Neighbor_Home',    bssid: 'A4:2B:B0:FF:EE:DD', wps_enabled: false, signal: '38%', security: 'wpa3', has_password: false, savedPw: null },
+            { stt: 6, ssid: 'Xiaomi_Router',    bssid: '64:09:80:12:34:56', wps_enabled: true,  signal: '30%', security: 'wpa2', has_password: false, savedPw: null }
+        ],
+        lanDevices: {
+            '192.168.1.1':  { ip:'192.168.1.1',  open_ports:[22,53,80,443],          os_guess:'Linux Router (OpenWrt)',   total_open:4, port_details:[
+                {port:22,service:'SSH',status:'open'},{port:53,service:'DNS',status:'open'},{port:80,service:'HTTP',status:'open'},{port:443,service:'HTTPS',status:'open'}
+            ]},
+            '192.168.1.5':  { ip:'192.168.1.5',  open_ports:[135,139,445,3389],      os_guess:'Windows (SMB share)',      total_open:4, port_details:[
+                {port:135,service:'RPC',status:'open'},{port:139,service:'NetBIOS',status:'open'},{port:445,service:'SMB',status:'open'},{port:3389,service:'RDP',status:'open'}
+            ]},
+            '192.168.1.10': { ip:'192.168.1.10', open_ports:[22,3306],               os_guess:'Linux Server (SSH + MySQL)', total_open:2, port_details:[
+                {port:22,service:'SSH',status:'open'},{port:3306,service:'MySQL',status:'open'}
+            ]},
+            '192.168.1.15': { ip:'192.168.1.15', open_ports:[22,80,5000,5001],       os_guess:'NAS Storage',              total_open:4, port_details:[
+                {port:22,service:'SSH',status:'open'},{port:80,service:'HTTP',status:'open'},{port:5000,service:'UPnP',status:'open'},{port:5001,service:'HTTPS',status:'open'}
+            ]},
+            '192.168.1.20': { ip:'192.168.1.20', open_ports:[],                      os_guess:'Unknown (Phone)',          total_open:0, port_details:[] }
+        }
+    };
+
+    // ---------- Terminal Helpers ----------
+    function dLog(text, type='info') {
+        const term = document.getElementById('demoTerminal');
+        if (!term) return;
+        const div = document.createElement('div');
+        div.className = 'demo-log ' + type;
+        const ts = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+        div.textContent = `[${ts}] ${text}`;
+        term.appendChild(div);
+        while (term.children.length > 400) term.removeChild(term.firstChild);
+        term.scrollTop = term.scrollHeight;
+    }
+
+    function dStatus(text) {
+        const el = document.getElementById('dStatus');
+        if (el) {
+            const ts = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+            el.textContent = `[${ts}] ${text}`;
+        }
+    }
+
+    function dHint(text, cls='') {
+        const el = document.getElementById('dHint');
+        if (!el) return;
+        el.innerHTML = text;
+        el.className = 'demo-hint ' + cls;
+    }
+
+    function dLockUI(lock) {
+        DEMO.isProcessing = !!lock;
+        const btns = ['dBtnScan','dBtnLan','dBtnDirb','dBtnClear','dBtnQuit','dBtnConnect','dBtnWps','dBtnAuto','dPwToggle','dBtnInstall'];
+        btns.forEach(id => {
+            const b = document.getElementById(id);
+            if (b) b.disabled = lock;
+        });
+        const pw = document.getElementById('dPwInput');
+        if (pw) pw.disabled = lock || !DEMO.selectedNetwork;
+
+        const wpsBtn = document.getElementById('dBtnWps');
+        if (wpsBtn) {
+            if (!lock && DEMO.selectedNetwork && DEMO.selectedNetwork.wps_enabled) {
+                wpsBtn.disabled = false;
+            } else {
+                wpsBtn.disabled = true;
+            }
+        }
+
+        const stopC = document.getElementById('dStopContainer');
+        if (stopC) {
+            if (lock && DEMO.currentTask && ['scan','lan_scan','dirb','wps','auto'].includes(DEMO.currentTask)) {
+                stopC.style.display = 'block';
+            } else {
+                stopC.style.display = 'none';
+            }
+        }
+    }
+
+    function dShowBusy(taskName) {
+        dLockUI(true);
+        DEMO.currentTask = taskName;
+        const stopC = document.getElementById('dStopContainer');
+        if (stopC) stopC.style.display = 'block';
+    }
+
+    function dFinishTask() {
+        DEMO.isProcessing = false;
+        DEMO.currentTask = null;
+        const stopC = document.getElementById('dStopContainer');
+        if (stopC) stopC.style.display = 'none';
+        dLockUI(false);
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    async function dTypeLine(text, type='info', delay=18) {
+        const term = document.getElementById('demoTerminal');
+        if (!term) return;
+        const div = document.createElement('div');
+        div.className = 'demo-log ' + type;
+        const ts = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+        const prefix = `[${ts}] `;
+        div.textContent = prefix;
+        term.appendChild(div);
+        term.scrollTop = term.scrollHeight;
+        for (let i = 0; i < text.length; i++) {
+            div.textContent += text[i];
+            if (i % 3 === 0) {
+                term.scrollTop = term.scrollHeight;
+                await sleep(delay);
+            }
+        }
+        term.scrollTop = term.scrollHeight;
+    }
+
+    // ===================================================
+    // ============== PROGRESS BAR (v3.4) ================
+    // ===================================================
+    function dShowProgress(pct, label) {
+        const wrap = document.getElementById('dProgressWrap');
+        const inner = document.getElementById('dProgressInner');
+        const lab = document.getElementById('dProgressLabel');
+        if (!wrap || !inner || !lab) return;
+
+        if (pct === null || pct === undefined || pct < 0) {
+            wrap.classList.remove('active');
+            inner.style.width = '0%';
+            lab.textContent = '0%';
+            if (DEMO.progressTimer) { clearInterval(DEMO.progressTimer); DEMO.progressTimer = null; }
+            return;
+        }
+
+        wrap.classList.add('active');
+        pct = Math.max(0, Math.min(100, pct));
+        DEMO.progressPct = pct;
+        inner.style.width = pct + '%';
+        lab.textContent = Math.round(pct) + '%' + (label ? ' — ' + label : '');
+    }
+
+    function dStartProgress(label) {
+        DEMO.progressPct = 0;
+        dShowProgress(0, label || 'Đang khởi tạo...');
+        if (DEMO.progressTimer) clearInterval(DEMO.progressTimer);
+        DEMO.progressTimer = setInterval(() => {
+            if (DEMO.progressPct < 90) {
+                DEMO.progressPct += Math.random() * 3 + 0.6;
+                if (DEMO.progressPct > 90) DEMO.progressPct = 90;
+                dShowProgress(DEMO.progressPct, label);
+            }
+        }, 700);
+    }
+
+    function dStopProgress(final) {
+        if (DEMO.progressTimer) { clearInterval(DEMO.progressTimer); DEMO.progressTimer = null; }
+        if (final) {
+            dShowProgress(100, 'Hoàn tất');
+            setTimeout(() => dShowProgress(null), 1500);
+        } else {
+            dShowProgress(null);
+        }
+    }
+
+    // ===================================================
+    // ============== MODAL INPUT (v3.4) =================
+    // ===================================================
+    function demoAskModal(message, defaultValue, hint) {
+        return new Promise((resolve) => {
+            const overlay = document.getElementById('dModalOverlay');
+            const titleEl = document.getElementById('dModalTitle');
+            const labelEl = document.getElementById('dModalLabel');
+            const inputEl = document.getElementById('dModalInput');
+            const hintEl = document.getElementById('dModalHint');
+
+            titleEl.textContent = '📥 Nhập thông tin';
+            labelEl.textContent = message || 'Giá trị:';
+            inputEl.value = defaultValue || '';
+            hintEl.textContent = hint || '';
+            overlay.classList.add('active');
+            DEMO.modalResolver = resolve;
+            setTimeout(() => inputEl.focus(), 120);
+
+            inputEl.onkeydown = (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); demoModalOk(); }
+                if (e.key === 'Escape') { e.preventDefault(); demoCloseModal(); }
+            };
+        });
+    }
+
+    function demoModalOk() {
+        const inputEl = document.getElementById('dModalInput');
+        const val = inputEl ? inputEl.value : '';
+        const resolver = DEMO.modalResolver;
+        DEMO.modalResolver = null;
+        document.getElementById('dModalOverlay').classList.remove('active');
+        if (resolver) resolver(val);
+    }
+
+    function demoCloseModal() {
+        const resolver = DEMO.modalResolver;
+        DEMO.modalResolver = null;
+        document.getElementById('dModalOverlay').classList.remove('active');
+        if (resolver) resolver(null);
+    }
+
+    // ===================================================
+    // ============== MAIN RESULT (v3.4) =================
+    // ===================================================
+    function dSetMainResult(title, contentHtml) {
+        const sec = document.getElementById('dMainResult');
+        const titleEl = document.getElementById('dResultTitle');
+        const bodyEl = document.getElementById('dResultBody');
+        titleEl.innerHTML = title;
+        bodyEl.innerHTML = contentHtml;
+        dShowProgress(null);
+        sec.classList.add('active');
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function demoCloseMainResult() {
+        const sec = document.getElementById('dMainResult');
+        sec.classList.remove('active');
+        dShowProgress(null);
+    }
+
+    function dRenderModulePanel(panel) {
+        let html = `<div class="demo-module-panel">`;
+        if (panel.title) html += `<h4>${panel.title}</h4>`;
+        html += panel.html || '';
+        if (panel.actions && panel.actions.length) {
+            html += `<div class="demo-module-actions">`;
+            panel.actions.forEach((a, idx) => {
+                const id = 'dModAct-' + idx + '-' + Date.now();
+                html += `<button class="demo-btn ${a.color === 'primary' ? 'blue' : a.color === 'success' ? 'green' : a.color === 'danger' ? 'red' : 'cyan'}"
+                    id="${id}" onclick="dRunPanelAction('${encodeURIComponent(JSON.stringify(a))}')">
+                    ${a.icon || '🔧'} ${a.label || 'Run'}</button>`;
+            });
+            html += `</div>`;
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    function dRunPanelAction(encoded) {
+        try {
+            const a = JSON.parse(decodeURIComponent(encoded));
+            if (!DEMO.isProcessing && !DEMO.selectedNetwork) {
+                dHint('⚠️ Chưa chọn mạng!', 'err');
+                return;
+            }
+            if (a.command === 'dirb') {
+                demoDirb();
+            } else if (a.command === 'lan_scan') {
+                demoLanScan();
+            } else if (a.command === 'scan') {
+                demoScan();
+            } else {
+                dStatus(`Panel action: ${a.label || a.command}`);
+            }
+        } catch (e) {}
+    }
+
+    // ===================================================
+    // ==================== DEMO: SCAN ===================
+    // ===================================================
+    async function demoScan() {
+        if (DEMO.isProcessing) return;
+        dShowBusy('scan');
+        dStatus('📡 Đang quét WiFi...');
+        dHint('');
+        dStartProgress('Quét WiFi');
+
+        document.getElementById('dLanContainer').style.display = 'none';
+        document.getElementById('dDirbContainer').style.display = 'none';
+        document.getElementById('dNetworkContainer').innerHTML = '';
+        demoCloseMainResult();
+
+        await dTypeLine('$> scan', 'cmd');
+        await dTypeLine('[*] Đang quét WiFi... Vui lòng chờ...', 'info', 12);
+        dShowProgress(15, 'Khởi động wlan0...');
+        await sleep(500);
+        await dTypeLine('[*] Khởi động wlan0...', 'info');
+        await sleep(400);
+        dShowProgress(30, 'Bật WiFi...');
+        await dTypeLine('[*] set wifi enable', 'info');
+        await sleep(600);
+        dShowProgress(50, 'Đang lấy danh sách scan...');
+        await dTypeLine('[+] Đã bật WiFi, đang quét...', 'success');
+        await sleep(400);
+
+        const fakeMacs = ['20:BE:B4:73:EE:A5','CC:81:DA:11:22:33','84:DB:AC:44:55:66','D8:07:B6:AA:BB:CC','00:0C:29:11:22:33','A4:2B:B0:FF:EE:DD','64:09:80:12:34:56'];
+        for (let i = 0; i < DEMO.networks.length; i++) {
+            await sleep(120);
+            const pct = 50 + Math.round((i + 1) / DEMO.networks.length * 45);
+            dShowProgress(pct, `AP ${i + 1}/${DEMO.networks.length}`);
+            dLog(`  [+] AP ${i+1}: ${DEMO.networks[i].ssid} [${fakeMacs[i]}] ${DEMO.networks[i].signal}`, 'info');
+        }
+        await sleep(300);
+        dShowProgress(98, 'Xử lý kết quả...');
+        await dTypeLine(`[✓] Tìm thấy ${DEMO.networks.length} mạng WiFi.`, 'success');
+
+        await sleep(200);
+        dLog('', 'info');
+        dLog('='.repeat(90), 'info');
+        dLog(`${'STT'.padEnd(6)} | ${'Tên Wifi'.padEnd(24)} | ${'BSSID'.padEnd(20)} | ${'WPS'.padEnd(6)} | ${'Cường độ'.padEnd(10)} | Trạng thái`, 'info');
+        dLog('='.repeat(90), 'info');
+        DEMO.networks.forEach(n => {
+            const wps = n.wps_enabled ? '✅ Có' : '❌ Không';
+            const tt = n.has_password ? '[ĐÃ LƯU]' : '[Mới]';
+            const name = n.ssid.length > 22 ? n.ssid.substring(0,22)+'...' : n.ssid;
+            dLog(`${String(n.stt).padEnd(6)} | ${name.padEnd(24)} | ${n.bssid.padEnd(20)} | ${wps.padEnd(6)} | ${n.signal.padEnd(10)} | ${tt}`, 'info');
+        });
+        dLog('='.repeat(90), 'info');
+
+        renderNetworkList();
+        dStopProgress(true);
+        dStatus(`✅ Tìm thấy ${DEMO.networks.length} mạng WiFi — Chọn mạng để kết nối`);
+        dFinishTask();
+    }
+
+    function renderNetworkList() {
+        const c = document.getElementById('dNetworkContainer');
+        let html = `<div class="demo-net-list">
+            <div class="demo-net-header">
+                <div>STT</div><div>Tên WiFi</div><div>BSSID</div><div>WPS</div>
+            </div>`;
+        DEMO.networks.forEach(n => {
+            const wps = n.wps_enabled ? '<span class="demo-badge wps">✅ Có</span>' : '<span class="demo-badge no-wps">❌ Không</span>';
+            const saved = n.has_password ? '<span class="demo-badge saved">💾</span>' : '';
+            const sel = DEMO.selectedNetwork && DEMO.selectedNetwork.stt === n.stt ? 'selected' : '';
+            html += `<div class="demo-net-item ${sel}" onclick="demoSelectNetwork(${n.stt})" data-stt="${n.stt}">
+                <div><strong>${n.stt}</strong></div>
+                <div>${escapeHtml(n.ssid)} ${saved}<div class="demo-signal">📶 ${n.signal} • ${n.security.toUpperCase()}</div></div>
+                <div class="demo-mono">${n.bssid}</div>
+                <div>${wps}</div>
+            </div>`;
+        });
+        html += `</div>`;
+        c.innerHTML = html;
+    }
+
+    function escapeHtml(t) {
+        const d = document.createElement('div');
+        d.textContent = t;
+        return d.innerHTML;
+    }
+
+    function demoSelectNetwork(stt) {
+        if (DEMO.isProcessing) return;
+        const n = DEMO.networks.find(x => x.stt === stt);
+        if (!n) return;
+        DEMO.selectedNetwork = n;
+
+        renderNetworkList();
+
+        const pw = document.getElementById('dPwInput');
+        const toggle = document.getElementById('dPwToggle');
+        pw.disabled = false;
+        toggle.disabled = false;
+        document.getElementById('dBtnConnect').disabled = false;
+        document.getElementById('dBtnAuto').disabled = false;
+        document.getElementById('dBtnWps').disabled = !n.wps_enabled;
+
+        if (n.has_password) {
+            const fake = 'DEMO_' + Math.random().toString(36).slice(2,10);
+            pw.value = fake;
+            pw.placeholder = '🔒 Đã có mật khẩu lưu - Nhập mật khẩu MỚI nếu muốn thay đổi';
+            DEMO.isFakePasswordActive = true;
+            DEMO.currentFakePasswordValue = fake;
+            dHint('🔒 Mạng này đã có mật khẩu được lưu. Bạn có thể: <br>• Ấn "Kết Nối" để dùng mật khẩu đã lưu <br>• HOẶC nhập mật khẩu MỚI vào ô bên trên', 'warn');
+        } else {
+            pw.value = '';
+            pw.placeholder = '🔐 Nhập mật khẩu WiFi (bắt buộc)';
+            DEMO.isFakePasswordActive = false;
+            DEMO.currentFakePasswordValue = '';
+            dHint(`🔐 Vui lòng nhập mật khẩu cho <strong>${escapeHtml(n.ssid)}</strong>`);
+        }
+        dStatus(`Đã chọn: ${n.ssid} (${n.bssid})`);
+    }
+
+    function demoTogglePw() {
+        const pw = document.getElementById('dPwInput');
+        const btn = document.getElementById('dPwToggle');
+        if (!pw || !btn) return;
+        if (pw.type === 'password') {
+            pw.type = 'text';
+            btn.textContent = '🙈';
+            btn.title = 'Ẩn mật khẩu';
+        } else {
+            pw.type = 'password';
+            btn.textContent = '👁️';
+            btn.title = 'Hiện mật khẩu';
+        }
+    }
+
+    // ===================================================
+    // ==================== DEMO: CONNECT ================
+    // ===================================================
+    async function demoConnect() {
+        if (DEMO.isProcessing) return;
+        if (!DEMO.selectedNetwork) {
+            dHint('⚠️ Chưa chọn mạng nào!', 'err');
+            return;
+        }
+        const n = DEMO.selectedNetwork;
+        const pw = document.getElementById('dPwInput');
+        const inputVal = pw.value.trim();
+
+        const usingFake = DEMO.isFakePasswordActive && inputVal === DEMO.currentFakePasswordValue;
+        let passwordToUse = usingFake ? (n.savedPw || '(saved)') : inputVal;
+
+        if (!usingFake && !inputVal && n.security !== 'open') {
+            dHint('⚠️ Vui lòng nhập mật khẩu!', 'err');
+            return;
+        }
+
+        dShowBusy('connect');
+        dStatus(`🔌 Đang kết nối tới ${n.ssid}...`);
+        dStartProgress('Kết nối WiFi');
+
+        await dTypeLine('$> connect_with_password', 'cmd');
+        await dTypeLine(`[*] BẮT ĐẦU KẾT NỐI TỚI: ${n.ssid}`, 'info');
+        await dTypeLine(`[*] BSSID: ${n.bssid}`, 'info');
+        dShowProgress(20, 'Đọc database...');
+        await sleep(400);
+
+        if (usingFake) {
+            await dTypeLine(`[INFO] Đang dùng mật khẩu đã lưu trong database...`, 'info');
+        } else {
+            await dTypeLine(`[INFO] Đang thử mật khẩu từ client: "${'•'.repeat(Math.min(inputVal.length,12))}"`, 'info');
+        }
+
+        dShowProgress(40, 'Tắt auto-reconnect...');
+        await sleep(600);
+        await dTypeLine('[*] Tạm thời tắt auto-reconnect...', 'info');
+        await sleep(400);
+        await dTypeLine('[*] Ngắt kết nối cũ (nếu có)...', 'info');
+        dShowProgress(55, 'Kết nối...');
+        await sleep(400);
+        await dTypeLine(`[*] cmd wifi connect-network "${n.ssid}" ${n.security} "****"`, 'cmd');
+        await sleep(900);
+        dShowProgress(70, 'Đợi kết nối...');
+        await dTypeLine('[.] Đang đợi kết nối... (1/10)', 'info');
+        await sleep(700);
+        dShowProgress(85, 'Đợi IP...');
+        await dTypeLine('[.] Đang đợi kết nối... (2/10)', 'info');
+        await sleep(700);
+
+        const ok = Math.random() > 0.2;
+
+        if (ok) {
+            dShowProgress(100, 'Hoàn tất');
+            await dTypeLine(`[+] XÁC NHẬN: Đã kết nối đúng mạng '${n.ssid}' ✅`, 'success');
+            await dTypeLine(`[+] Kết nối THÀNH CÔNG tới '${n.ssid}'!`, 'success');
+            await dTypeLine(`[*] Đã lưu mật khẩu vào database!`, 'success');
+            dStatus(`✅ Kết nối thành công tới ${n.ssid}`);
+            n.has_password = true;
+            if (!n.savedPw) n.savedPw = passwordToUse;
+
+            showDemoVulnReport('password', n, passwordToUse);
+        } else {
+            dStopProgress(false);
+            await dTypeLine(`[-] Kết nối thất bại: Sai mật khẩu!`, 'error');
+            await dTypeLine(`[-] Vui lòng thử lại với mật khẩu khác.`, 'error');
+            dStatus(`❌ Kết nối thất bại tới ${n.ssid}`);
+            dHint('❌ Sai mật khẩu - Vui lòng thử lại', 'err');
+        }
+
+        dStopProgress(true);
+        dFinishTask();
+    }
+
+    // ===================================================
+    // ==================== DEMO: WPS ====================
+    // ===================================================
+    async function demoWps() {
+        if (DEMO.isProcessing) return;
+        if (!DEMO.selectedNetwork || !DEMO.selectedNetwork.wps_enabled) {
+            dHint('⚠️ WPS không được bật trên mạng này!', 'err');
+            return;
+        }
+        const n = DEMO.selectedNetwork;
+        dShowBusy('wps');
+        dStatus(`⚡ Đang tấn công WPS ${n.ssid}...`);
+        dStartProgress('Tấn công WPS');
+
+        await dTypeLine('$> wps_attack', 'cmd');
+        await dTypeLine(`[*] Đang chuẩn bị mục tiêu: ${n.bssid}`, 'info');
+        dShowProgress(10, 'Tắt WiFi hệ thống...');
+        await dTypeLine('[*] Tắt WiFi hệ thống để tránh xung đột...', 'info');
+        await sleep(700);
+        dShowProgress(20, 'Bật interface wlan0...');
+        await dTypeLine('[*] Bật interface wlan0...', 'info');
+        await sleep(500);
+        dShowProgress(30, 'Khởi động wpa_supplicant...');
+        await dTypeLine(`[*] Bắt đầu tấn công Pixie Dust vào ${n.bssid}`, 'info');
+        await sleep(500);
+
+        await dTypeLine('[*] Khởi động wpa_supplicant -K -d...', 'info');
+        await sleep(600);
+        for (let i = 1; i <= 4; i++) {
+            const pct = 30 + i * 10;
+            dShowProgress(pct, `Lần thử PIN ${i}/8`);
+            await dTypeLine(`[*] Lần thử PIN #${i}/8: ${Math.random().toString(16).slice(2,10).toUpperCase()}`, 'info');
+            await sleep(450);
+        }
+        dShowProgress(75, 'Thu thập đủ dữ liệu!');
+        await dTypeLine('[+] Thu thập đủ PKE, PKR, E-Hash1, E-Hash2, AuthKey, E-Nonce!', 'success');
+        await sleep(500);
+        dShowProgress(85, 'Chạy pixiewps...');
+        await dTypeLine('[*] Đang chạy pixiewps...', 'info');
+        await sleep(700);
+
+        const ok = Math.random() > 0.25;
+
+        if (ok) {
+            dShowProgress(100, 'Hoàn tất');
+            const pin = String(Math.floor(10000000 + Math.random() * 90000000));
+            const psk = 'PSK_' + Math.random().toString(36).slice(2, 12);
+            await dTypeLine(`[+] pixiewps: Tìm được WPS PIN: ${pin}`, 'success');
+            await dTypeLine(`[*] Đang thử lại với PIN ${pin}...`, 'info');
+            await sleep(700);
+            await dTypeLine(`[+] WPS SUCCESS! WPA PSK: ${psk}`, 'success');
+            await dTypeLine('[*] Đang lưu vào database...', 'info');
+            await dTypeLine('[*] Khôi phục WiFi hệ thống...', 'info');
+            await sleep(500);
+            await dTypeLine('[+] Đã khôi phục Wifi hệ thống!', 'success');
+            dStatus(`✅ WPS thành công! PIN: ${pin} • PSK đã lưu`);
+
+            n.has_password = true;
+            n.savedPw = psk;
+            showDemoVulnReport('pixie_dust', n, psk);
+        } else {
+            dStopProgress(false);
+            await dTypeLine('[-] pixiewps: Không tính được PIN (AP không dính lỗi Pixie Dust)', 'error');
+            await dTypeLine('[-] Tấn công WPS thất bại.', 'error');
+            dStatus(`❌ WPS thất bại trên ${n.ssid}`);
+        }
+
+        dStopProgress(true);
+        dFinishTask();
+    }
+
+    // ===================================================
+    // ==================== DEMO: AUTO ===================
+    // ===================================================
+    async function demoAutoConnect() {
+        if (DEMO.isProcessing) return;
+        if (!DEMO.selectedNetwork) return;
+        const n = DEMO.selectedNetwork;
+        dShowBusy('auto');
+        dStatus(`🔄 Auto Connect ${n.ssid}...`);
+        dStartProgress('Auto Connect');
+
+        await dTypeLine('$> auto_connect', 'cmd');
+        dShowProgress(10, 'Đọc database...');
+        await dTypeLine(`[*] Đọc database networks.acdv...`, 'info');
+        await sleep(400);
+        const uniquePws = [...new Set(DEMO.networks.filter(x=>x.has_password&&x.savedPw).map(x=>x.savedPw))];
+        dShowProgress(30, `Tìm ${uniquePws.length} password...`);
+        await dTypeLine(`[*] Tìm thấy ${uniquePws.length} mật khẩu UNIQUE trong database`, 'info');
+        for (let i = 0; i < uniquePws.length; i++) {
+            const pct = 30 + Math.round((i+1)/uniquePws.length * 60);
+            dShowProgress(pct, `Thử password #${i+1}/${uniquePws.length}`);
+            await dTypeLine(`[*] Đang thử: ID #${i} | SSID '${n.ssid}' | Pass: '${uniquePws[i].slice(0,3)}***'`, 'info');
+            await sleep(350);
+        }
+        dShowProgress(100, 'Hoàn tất');
+        await dTypeLine(`[+] Auto Connect THÀNH CÔNG!`, 'success');
+        dStatus(`✅ Auto Connect thành công tới ${n.ssid}`);
+        showDemoVulnReport('auto_connect', n, uniquePws[0] || '12345678');
+        dStopProgress(true);
+        dFinishTask();
+    }
+
+    // ===================================================
+    // ==================== DEMO: LAN SCAN ===============
+    // ===================================================
+    async function demoLanScan() {
+        if (DEMO.isProcessing) return;
+        dShowBusy('lan_scan');
+        dStatus('🌐 Đang quét mạng LAN (3 vòng, cache RAM)...');
+        dStartProgress('Quét LAN');
+
+        document.getElementById('dNetworkContainer').innerHTML = '';
+        document.getElementById('dDirbContainer').style.display = 'none';
+        document.getElementById('dLanContainer').style.display = 'none';
+        demoCloseMainResult();
+
+        await dTypeLine('$> lan_scan {fast_mode: true, scan_rounds: 3}', 'cmd');
+        await dTypeLine('='*58, 'info');
+        await dTypeLine('🔍 BẮT ĐẦU QUÉT MẠNG LAN (3 vòng, có cache RAM)', 'info');
+        await dTypeLine('='*58, 'info');
+        dShowProgress(5, 'Lấy IP cục bộ...');
+        await dTypeLine('[*] IP cục bộ: 192.168.1.100', 'info');
+        await dTypeLine('[*] Prefix mạng: 192.168.1.', 'info');
+        await sleep(400);
+
+        for (let r = 1; r <= 3; r++) {
+            const basePct = 5 + (r - 1) * 30;
+            dShowProgress(basePct, `Vòng ${r}/3 — ping 254 host...`);
+            await dTypeLine(`─── VÒNG QUÉT ${r}/3 ───`, 'info');
+            await dTypeLine(`[*] Đang ping 254 địa chỉ...`, 'info');
+            await sleep(700);
+            const foundNow = r === 1 ? 5 : (r === 2 ? 2 : 0);
+            dShowProgress(basePct + 15, `Vòng ${r} — quét cổng...`);
+            await dTypeLine(`[+] Vòng ${r}: ${5 + (r-1)*2} host phản hồi, ${foundNow} host MỚI`, 'info');
+            if (foundNow > 0) {
+                await dTypeLine(`[*] Quét cổng trên ${foundNow} host mới...`, 'info');
+                await sleep(500);
+                Object.values(DEMO.lanDevices).forEach(d => {
+                    if (d.total_open > 0) {
+                        dLog(`  [✓] ${d.ip}: 📡 ${d.total_open} cổng - ${d.open_ports.slice(0,6).join(', ')}`, 'info');
+                    } else {
+                        dLog(`  [○] ${d.ip}: không có cổng mở`, 'info');
+                    }
+                });
+            }
+        }
+        dShowProgress(98, 'Xử lý kết quả...');
+        await dTypeLine('='.repeat(58), 'info');
+        await dTypeLine(`✅ Tổng thiết bị phát hiện: 5`, 'success');
+        await dTypeLine(`✅ Thiết bị có cổng mở: 4`, 'success');
+        await dTypeLine(`🔌 Tổng cổng mở (unique): 14`, 'success');
+        await dTypeLine(`🏆 Top: 192.168.1.1 (4 cổng) • 192.168.1.5 (4 cổng) • 192.168.1.15 (4 cổng)`, 'info');
+
+        renderLanList();
+        dStopProgress(true);
+        dStatus('✅ Quét LAN xong — 5 thiết bị được phát hiện');
+        dFinishTask();
+    }
+
+    function renderLanList() {
+        const c = document.getElementById('dLanContainer');
+        let html = `<h3 style="color:var(--accent-cyan);font-size:14px;margin:14px 0 10px 0;">🖧 Thiết Bị Trong Mạng LAN</h3>
+        <div class="demo-lan-list">
+            <div class="demo-lan-header"><div>Địa chỉ IP</div><div>Thông tin</div><div>Số cổng mở</div></div>`;
+        Object.values(DEMO.lanDevices).forEach(d => {
+            const ports = d.open_ports.slice(0,5).map(p => `<span class="demo-port-badge">${p}</span>`).join('');
+            const more = d.open_ports.length > 5 ? ` +${d.open_ports.length-5}` : '';
+            html += `<div class="demo-lan-item">
+                <div class="demo-lan-ip">🌐 ${d.ip}</div>
+                <div>
+                    <div class="demo-lan-os">💻 ${d.os_guess}</div>
+                    ${d.total_open > 0 ? `<div class="demo-lan-ports">🔌 ${ports}${more}</div>` : `<div class="demo-lan-ports" style="color:#dc3545;">❌ Không có cổng mở</div>`}
+                </div>
+                <div><span class="demo-badge" style="background:#17a2b8;color:white;">${d.total_open} cổng</span></div>
+            </div>`;
+        });
+        html += `</div>`;
+        c.innerHTML = html;
+        c.style.display = 'block';
+    }
+
+    // ===================================================
+    // ==================== DEMO: DIRB ===================
+    // ===================================================
+    async function demoDirb() {
+        if (DEMO.isProcessing) return;
+
+        const url = await demoAskModal(
+            'Nhập URL cần quét thư mục ẩn:',
+            'http://192.168.1.1',
+            'Ví dụ: http://192.168.1.1 hoặc http://192.168.1.1:8080'
+        );
+        if (!url) return;
+        const target = url.trim().replace(/\/+$/, '');
+
+        dShowBusy('dirb');
+        dStatus(`🔍 Đang quét thư mục ẩn trên ${target}...`);
+        dStartProgress('Quét thư mục ẩn');
+
+        document.getElementById('dNetworkContainer').innerHTML = '';
+        document.getElementById('dLanContainer').style.display = 'none';
+        document.getElementById('dDirbContainer').style.display = 'none';
+        demoCloseMainResult();
+
+        await dTypeLine(`$> dirb {url: "${target}"}`, 'cmd');
+        dShowProgress(5, 'Đọc wordlist...');
+        await dTypeLine(`[*] Tổng số đường dẫn cần thử: 180`, 'info');
+        await dTypeLine(`[*] Target: ${target}`, 'info');
+        await dTypeLine(`[+] Target phản hồi HTTP 200`, 'success');
+
+        const found = [
+            { dir:'admin',       status:'200', url: target + '/admin' },
+            { dir:'admin/login', status:'200', url: target + '/admin/login' },
+            { dir:'login',       status:'302', url: target + '/login' },
+            { dir:'api',         status:'200', url: target + '/api' },
+            { dir:'api/v1',      status:'200', url: target + '/api/v1' },
+            { dir:'uploads',     status:'301', url: target + '/uploads/' },
+            { dir:'backup',      status:'403', url: target + '/backup' },
+            { dir:'config',      status:'403', url: target + '/config' },
+            { dir:'robots.txt',  status:'200', url: target + '/robots.txt' },
+            { dir:'.env',        status:'200', url: target + '/.env' },
+            { dir:'phpinfo.php', status:'200', url: target + '/phpinfo.php' },
+            { dir:'server-status', status:'403', url: target + '/server-status' },
+            { dir:'test',        status:'200', url: target + '/test' },
+            { dir:'db',          status:'200', url: target + '/db' },
+            { dir:'backup.zip',  status:'200', url: target + '/backup.zip' }
+        ];
+
+        for (let i = 0; i < found.length; i++) {
+            await sleep(180);
+            dLog(`  ✓ [${found[i].status}] ${found[i].url}`, 'success');
+            if (i === 6) {
+                dShowProgress(30, '50/180 path');
+                await dTypeLine('[*] Đã kiểm tra 50/180...', 'info');
+            }
+            if (i === 12) {
+                dShowProgress(70, '100/180 path');
+                await dTypeLine('[*] Đã kiểm tra 100/180...', 'info');
+            }
+        }
+        dShowProgress(100, 'Hoàn tất');
+        await dTypeLine(`[+] QUÉT DIRB HOÀN TẤT: ${found.length} mục tìm thấy`, 'success');
+
+        const panelHtml = `
+            <div class="demo-kv-row"><span class="demo-kv-key">Target</span><span class="demo-kv-val">${escapeHtml(target)}</span></div>
+            <div class="demo-kv-row"><span class="demo-kv-key">Wordlist</span><span class="demo-kv-val">180</span></div>
+            <div class="demo-kv-row"><span class="demo-kv-key">Tìm thấy</span><span class="demo-kv-val">${found.length}</span></div>
+            <div style="margin-top:14px;">
+                ${found.slice(0,8).map(f => `
+                    <div class="demo-dirb-item">
+                        <a href="${f.url}" target="_blank" rel="noopener">🔗 ${escapeHtml(f.url)}</a>
+                        <span class="demo-dirb-code ${f.status === '200' ? '' : (f.status === '301' || f.status === '302' ? 'redirect' : 'forbidden')}">HTTP ${f.status}</span>
+                    </div>
+                `).join('')}
+                ${found.length > 8 ? `<div style="text-align:center;color:#94a3b8;font-size:11px;margin-top:8px;">... và ${found.length - 8} mục khác</div>` : ''}
+            </div>
+        `;
+        dSetMainResult('🔍 KẾT QUẢ DIRB', dRenderModulePanel({
+            title: `🔍 DIRB — ${target}`,
+            html: panelHtml,
+            actions: [
+                { label: 'Quét lại', icon: '🔄', color: 'primary', command: 'dirb' }
+            ]
+        }));
+
+        dStopProgress(true);
+        dStatus(`✅ Quét Dirb xong — Tìm thấy ${found.length} thư mục/file ẩn`);
+        dFinishTask();
+    }
+
+    // ===================================================
+    // ==================== DEMO: INSTALL MODULE =========
+    // ===================================================
+    async function demoInstallModule() {
+        if (DEMO.isProcessing) return;
+
+        const path = await demoAskModal(
+            'Nhập đường dẫn file module .py:',
+            '/sdcard/Download/my_module.py',
+            'Module phải kế thừa BaseModule và có đuôi .py'
+        );
+        if (!path) return;
+
+        dShowBusy('install');
+        dStatus(`📥 Đang cài module từ ${path}...`);
+        dStartProgress('Cài module');
+
+        await dTypeLine('$> install_module', 'cmd');
+        dShowProgress(20, 'Đọc file...');
+        await dTypeLine(`[*] Đọc file: ${path}`, 'info');
+        await sleep(600);
+        dShowProgress(50, 'Kiểm tra cú pháp Python...');
+        await dTypeLine('[*] Kiểm tra cú pháp... OK', 'success');
+        await sleep(400);
+        dShowProgress(80, 'Ghi file...');
+        await dTypeLine(`[+] Đã ghi file vào tinhnang/modules/`, 'success');
+        await sleep(500);
+        dShowProgress(100, 'Hoàn tất');
+        await dTypeLine('[+] Cài đặt thành công! Tool sẽ khởi động lại sau 3s...', 'success');
+        dStatus('✅ Cài module thành công — Sẽ restart tool');
+
+        const panelHtml = `
+            <div class="demo-kv-row"><span class="demo-kv-key">File</span><span class="demo-kv-val">${escapeHtml(path.split('/').pop())}</span></div>
+            <div class="demo-kv-row"><span class="demo-kv-key">Kích thước</span><span class="demo-kv-val">~12.5 KB</span></div>
+            <div class="demo-kv-row"><span class="demo-kv-key">Trạng thái</span><span class="demo-kv-val" style="color:#28a745;">✓ Đã cài đặt</span></div>
+            <div class="demo-kv-row"><span class="demo-kv-key">Restart</span><span class="demo-kv-val">Sau 3s</span></div>
+        `;
+        dSetMainResult('📥 CÀI MODULE', dRenderModulePanel({
+            title: '📥 Module Installer',
+            html: panelHtml,
+            actions: [
+                { label: 'DS Module', icon: '📋', color: 'primary', command: 'list_modules' }
+            ]
+        }));
+
+        dStopProgress(true);
+        dFinishTask();
+    }
+
+    // ===================================================
+    // ============== DEMO: CLEAR / ENABLE WIFI ==========
+    // ===================================================
+    async function demoClearCard() {
+        if (DEMO.isProcessing) return;
+        dLockUI(true);
+        dStatus('🔄 Đang giải phóng card WiFi...');
+        dStartProgress('Giải phóng WiFi');
+        await dTypeLine('$> clear_all', 'cmd');
+        dShowProgress(20, 'Dừng WiFi...');
+        await dTypeLine('[*] Đang dừng WiFi...', 'info');
+        await sleep(600);
+        dShowProgress(50, 'Khởi động lại card...');
+        await dTypeLine('[*] Khởi động lại card WiFi...', 'info');
+        await sleep(700);
+        dShowProgress(100, 'Hoàn tất');
+        await dTypeLine('[+] Đã giải phóng card WiFi thành công!', 'success');
+        dStatus('✅ Đã giải phóng card WiFi');
+        dStopProgress(true);
+        dLockUI(false);
+    }
+
+    async function demoEnableWifi() {
+        if (DEMO.isProcessing) return;
+        dLockUI(true);
+        dStatus('🔌 Đang bật lại WiFi...');
+        dStartProgress('Bật lại WiFi');
+        await dTypeLine('$> quit', 'cmd');
+        dShowProgress(30, 'Bật WiFi...');
+        await dTypeLine('[*] Bật lại WiFi hệ thống...', 'info');
+        await sleep(700);
+        dShowProgress(100, 'Hoàn tất');
+        await dTypeLine('[*] Đã bật lại WiFi', 'success');
+        dStatus('✅ Đã bật lại WiFi');
+        dStopProgress(true);
+        dLockUI(false);
+    }
+
+    // ===================================================
+    // ============== DEMO: STOP / CLEAR TERM ============
+    // ===================================================
+    function demoStopTask() {
+        if (!DEMO.isProcessing) return;
+        dLog('', 'info');
+        dLog('[SYSTEM] ⏹️ Người dùng yêu cầu dừng tác vụ...', 'warn');
+        dLog('[*] Killing WPS processes...', 'info');
+        dLog("[*] pkill -9 wpa_supplicant / pixiewps", 'info');
+        dLog('[*] Killing scan processes...', 'info');
+        dLog("[*] pkill -9 iw / ping / nc", 'info');
+        dLog('[*] Cleaning temp files...', 'info');
+        dLog('[*] Restoring WiFi...', 'info');
+        dLog('[+] Đã dừng task thành công! Server vẫn đang chạy.', 'success');
+        dStopProgress(false);
+        dFinishTask();
+        dStatus('✅ Đã dừng tác vụ theo yêu cầu');
+    }
+
+    function demoClearTerminal() {
+        const t = document.getElementById('demoTerminal');
+        t.innerHTML = '';
+        dLog('[SYSTEM] Terminal đã được xóa', 'system');
+        dLog('[SYSTEM] Demo Mode v3.4 sẵn sàng — Nhấn "Quét WiFi" để bắt đầu', 'system');
+        dStatus('[DEMO] Sẵn sàng');
+    }
+
+    // ===================================================
+    // ============== DEMO: VULN REPORT + SUGGEST ========
+    // ===================================================
+    function analyzeDemoPassword(pw) {
+        let score = 0, fb = [];
+        if (!pw) return { score:0, strength:'Không có', feedback:['Chưa có mật khẩu'] };
+        if (pw.length >= 8) score++;
+        if (pw.length >= 12) score++;
+        if (pw.length >= 16) score++;
+        if (/[a-z]/.test(pw)) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[0-9]/.test(pw)) score++;
+        if (/[^a-zA-Z0-9]/.test(pw)) score++;
+        if (pw.length < 8) fb.push('Mật khẩu dưới 8 ký tự');
+        if (/^[0-9]+$/.test(pw)) fb.push('Chỉ toàn số');
+        if (/(.)\1{2,}/.test(pw)) fb.push('Có ký tự lặp');
+        let s = 'Yếu';
+        if (score >= 6) s = 'Rất mạnh';
+        else if (score >= 5) s = 'Mạnh';
+        else if (score >= 3) s = 'Trung bình';
+        return { score, strength:s, feedback:fb };
+    }
+
+    function demoGenStrongPw(seed) {
+        const u='ABCDEFGHJKLMNPQRSTUVWXYZ', l='abcdefghijkmnopqrstuvwxyz', n='23456789', s='!@#$%&*?';
+        const pick = str => str[Math.floor(Math.random()*str.length)];
+        let base = (seed || 'WiFi').replace(/\s/g,'').slice(0,6) || 'Secure';
+        let pw = base[0].toUpperCase() + base.slice(1).toLowerCase();
+        pw += pick(n) + pick(s) + pick(u) + pick(l) + pick(n) + pick(s);
+        return pw.split('').sort(()=>Math.random()-0.5).join('');
+    }
+
+    function showDemoVulnReport(attackType, net, password) {
+        const analysis = analyzeDemoPassword(password);
+
+        let html = `<div class="demo-vuln-item info" style="margin-bottom:12px;">
+            <strong>📡 Mạng:</strong> ${escapeHtml(net.ssid)} (${net.bssid})<br>
+            <strong>🔐 Mật khẩu bị lộ:</strong> <code style="background:#0F1220;padding:2px 6px;border-radius:6px;color:#ffc107;">${escapeHtml(password)}</code>
+            <span class="demo-suggest-strength" style="margin-left:6px;background:${analysis.score>=5?'#28a745':analysis.score>=3?'#ffc107':'#dc3545'};color:${analysis.score>=3&&analysis.score<5?'#333':'#fff'};">${analysis.strength}</span>
+        </div>`;
+
+        const vuls = [];
+        if (attackType === 'pixie_dust') {
+            vuls.push({ t:'💀 Lỗ hổng Pixie Dust', d:'Chipset WiFi của router dính lỗi PRNG, PIN WPS có thể bị tính toán trong vài giây.', s:'NGHIÊM TRỌNG' });
+        }
+        if (attackType === 'wps') {
+            vuls.push({ t:'🔓 WPS đang BẬT', d:'WPS PIN có thể brute-force trong vài giờ.', s:'CAO' });
+        }
+        if (analysis.score <= 3) {
+            vuls.push({ t:'🔓 Mật khẩu yếu', d:`Điểm: ${analysis.score}/7. ${analysis.feedback.join(' • ')}`, s:'CAO' });
+        }
+        if (/^[0-9]+$/.test(password)) {
+            vuls.push({ t:'⚠️ Mật khẩu chỉ có số', d:'Rất dễ bị brute-force bằng từ điển số.', s:'RẤT CAO' });
+        }
+        vuls.push({ t:'⚠️ Nguy cơ Dictionary Attack', d:'Mật khẩu phổ biến có thể bị bẻ khóa trong vài giây.', s:'TRUNG BÌNH' });
+
+        let vulnHtml = '';
+        vuls.forEach(v => {
+            vulnHtml += `<div class="demo-vuln-item">
+                <strong>${v.t}</strong>
+                <p>${v.d}</p>
+                <div class="severity">Mức độ: ${v.s}</div>
+            </div>`;
+        });
+
+        const suggestions = [
+            password + '!@#2026',
+            password.charAt(0).toUpperCase() + password.slice(1) + '@Secure',
+            demoGenStrongPw(net.ssid)
+        ];
+        let suggestHtml = `<div style="margin-top:16px;">`;
+        suggestions.forEach((s, i) => {
+            const an = analyzeDemoPassword(s);
+            suggestHtml += `<div class="demo-suggest-item">
+                <div class="demo-suggest-num">${i+1}</div>
+                <code class="demo-suggest-pw">${escapeHtml(s)}</code>
+                <span class="demo-suggest-strength">${an.strength}</span>
+            </div>`;
+        });
+        suggestHtml += `</div>`;
+
+        const title = attackType === 'pixie_dust' ? '💀 PIXIE DUST — PHÂN TÍCH'
+                    : attackType === 'wps' ? '⚡ WPS — PHÂN TÍCH'
+                    : attackType === 'auto_connect' ? '🔄 AUTO CONNECT — PHÂN TÍCH'
+                    : '🔑 MẬT KHẨU — PHÂN TÍCH';
+
+        const panelHtml = `
+            <h4 style="color:var(--accent-pink);margin-bottom:12px;">🚨 LỖ HỔNG PHÁT HIỆN</h4>
+            ${vulnHtml}
+            <h4 style="color:var(--accent-cyan);margin:16px 0 12px 0;">💡 GỢI Ý MẬT KHẨU MẠNH HƠN</h4>
+            ${suggestHtml}
+        `;
+
+        dSetMainResult(`🚨 ${title}`, dRenderModulePanel({
+            title: 'Phân tích bảo mật',
+            html: html + panelHtml,
+            actions: []
+        }));
+    }
+
+    // ===================================================
+    // ==================== INIT DEMO ====================
+    // ===================================================
+    window.addEventListener('DOMContentLoaded', () => {
+        dLog('[SYSTEM] ACDV-Teams WiFi Security Tool v3.4 — DEMO MODE', 'system');
+        dLog('[SYSTEM] ✅ WebSocket (simulated) đã kết nối', 'system');
+        dLog('[SYSTEM] 🎯 v3.4: Có Progress Bar %, Modal Input, Module Panel', 'system');
+        dLog('[SYSTEM] 📦 Module mới: Module Installer, LAN Nmap 4 chế độ', 'system');
+        dLog('[SYSTEM] Nhấn "Quét WiFi" để bắt đầu trải nghiệm', 'system');
+        dStatus('[DEMO] Sẵn sàng — Nhấn "Quét WiFi" để bắt đầu');
+    });
+</script>
+</body>
+</html>

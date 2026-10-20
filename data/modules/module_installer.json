@@ -1,0 +1,8 @@
+{
+  "description": "Cài đặt & quản lý module plugin (.py)",
+  "settings": {
+    "restart_delay": 3.0,
+    "allow_overwrite": false,
+    "max_size_kb": 512
+  }
+}

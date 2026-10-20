@@ -1,0 +1,18 @@
+{
+  "description": "Tải file từ Internet về data/downloads/ cho module khác dùng",
+  "download": [],
+  "fileDownload": false,
+  "files": {},
+  "settings": {
+    "download_dir": "downloads",
+    "timeout": 60,
+    "chunk_size": 8192,
+    "max_size": 524288000,
+    "user_agent": "Mozilla/5.0 (ACDV-Downloader/1.0)",
+    "allowed_protocols": [
+      "http",
+      "https"
+    ],
+    "verify_ssl": true
+  }
+}

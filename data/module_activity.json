@@ -1,0 +1,57 @@
+{
+  "next_id": 12,
+  "entries": [
+    {
+      "id": 5,
+      "timestamp": "2026-10-19 23:38:55",
+      "module": "wifi_module",
+      "command": "install_module",
+      "event": "install_success",
+      "severity": "info",
+      "message": "Đã ghi đè wifi_module.py",
+      "details": {
+        "filename": "wifi_module.py",
+        "overwrite": true
+      }
+    },
+    {
+      "id": 9,
+      "timestamp": "2026-10-20 07:49:08",
+      "module": "ping_module",
+      "command": "install_module",
+      "event": "install_success",
+      "severity": "info",
+      "message": "Đã cài đặt ping_module.py",
+      "details": {
+        "filename": "ping_module.py",
+        "overwrite": false
+      }
+    },
+    {
+      "id": 10,
+      "timestamp": "2026-10-20 07:58:05",
+      "module": "ping_module",
+      "command": "install_module",
+      "event": "install_success",
+      "severity": "info",
+      "message": "Đã cài đặt ping_module.py",
+      "details": {
+        "filename": "ping_module.py",
+        "overwrite": false
+      }
+    },
+    {
+      "id": 11,
+      "timestamp": "2026-10-20 18:07:26",
+      "module": "theme_module",
+      "command": "install_module",
+      "event": "install_success",
+      "severity": "info",
+      "message": "Đã cài đặt theme_module.py",
+      "details": {
+        "filename": "theme_module.py",
+        "overwrite": false
+      }
+    }
+  ]
+}

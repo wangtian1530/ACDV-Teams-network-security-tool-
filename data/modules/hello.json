@@ -1,0 +1,11 @@
+{
+  "description": "Module demo trả về lời chào",
+  "files": {},
+  "settings": {
+    "greeting": "Xin chào",
+    "name": "bạn",
+    "emoji": "👋",
+    "uppercase": false,
+    "call_count": 2
+  }
+}
